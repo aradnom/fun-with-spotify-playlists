@@ -1,0 +1,27 @@
+{
+  "name": "player-api",
+  "version": "0.1.0",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-autoprefixer": "^0.8.2",
+    "grunt-concurrent": "^0.5.0",
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-concat": "^0.5.0",
+    "grunt-contrib-uglify": "latest",
+    "grunt-contrib-imagemin": "^0.8.1",
+    "grunt-contrib-sass": "^0.8.1",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-contrib-cssmin": "latest",
+    "grunt-image-resize": "^0.4.0",
+    "grunt-spritesmith": "^2.1.1",
+    "grunt-svgmin": "^0.4.0",
+    "grunt-modernizr": "latest",
+    "grunt-phpcs": "latest",
+    "grunt-contrib-jshint": "latest",
+    "grunt-fontsmith": "latest",
+    "jshint-stylish": "latest",
+    "load-grunt-tasks": "^0.6.0",
+    "time-grunt": "latest",
+    "wiredep": "latest"
+  }
+}

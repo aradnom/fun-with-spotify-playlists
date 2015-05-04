@@ -1,0 +1,22 @@
+{
+    "name": "leeo-accounts",
+    "private": true,
+    "dependencies": {
+        
+        "angular": "latest",
+        "angular-resource": "latest",
+        
+        "angular-sanitize": "latest",
+        "angular-route": "latest",
+        "modernizr": "~2.6.2",
+        "jquery": "~1.11.0",
+        "jquery-migrate": "~1.2.1",
+        "es5-shim": "latest",
+        "json3": "latest",
+        "console-polyfill": "latest",
+        "html5shiv": "latest",
+        "respond": "~1.4.2",
+        "underscore": "~1.6.0"
+    },
+    "devDependencies": {}
+}

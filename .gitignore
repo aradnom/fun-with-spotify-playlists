@@ -1,0 +1,8 @@
+# Standard ignores for all project types
+
+.sass-cache
+.DS_Store
+/keys
+node_modules
+/logs
+/lib/config/config.js

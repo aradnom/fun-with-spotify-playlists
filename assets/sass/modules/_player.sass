@@ -1,0 +1,88 @@
+.player
+  text-align: center
+  margin-top: 0.5rem
+
+  > *
+    display: inline-block
+    vertical-align: top
+
+  button
+    border: none
+    background: #333
+    color: #888
+    width: 2rem
+    height: 2rem
+    font-size: 1rem
+    cursor: pointer
+    transition: 0.2s ease-out
+
+    &:hover
+      background: #444
+
+  &__prev
+    +icon-before($previous)
+
+  &__next
+    +icon-before($next)
+
+  &__play-pause
+    +icon-before($play)
+
+    &.\--stop
+      +icon-before($stop)
+
+  &__duration
+    &__current, &__remaining
+      &__lower, &__upper
+        position: absolute
+        top: 0.25rem
+        font-size: 0.9rem
+
+      &__lower
+        color: #999
+        z-index: 5
+
+      &__upper
+        color: #444
+
+    &__current
+      &__lower, &__upper
+        left: 0.6rem
+
+    &__remaining
+      &__lower, &__upper
+        right: 0.6rem
+        transition: 0.3s ease-out
+
+      &__lower
+        opacity: 1
+
+        &.\--off
+          opacity: 0
+
+      &__upper
+        opacity: 0
+
+        &.\--on
+          opacity: 1
+
+  &__progress
+    width: 0
+    height: 2rem
+    transition: 0.3s ease-out
+    position: relative
+
+    .player.\--playing &
+      width: 18.4rem
+      background: #333
+
+    &__inner
+      position: absolute
+      top: 0
+      left: 0
+      width: 0
+      height: 100%
+      background: map-get($services, spotify)
+      transition-timing-function: linear
+      z-index: 10
+      overflow: hidden

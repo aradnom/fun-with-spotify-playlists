@@ -1,0 +1,43 @@
+<article class="player-main">
+
+  <section class="search" ng-controller="Search">
+    <input type="text" class="search__query" ng-model="search.query" ng-keyup="runSearch()" placeholder="Search..." />
+  </section>
+
+  <section class="player" ng-controller="Player" ng-class="{ '--playing': playing }">
+    <button class="player__play-pause" ng-click="playPause()" ng-class="{ '--stop': playing }"><span class="vh">Play/Pause</button>
+    <button class="player__prev" ng-click="previousTrack()"><span class="vh">Previous</button>
+
+    <div class="player__progress">
+      <p class="player__duration__current__lower" ng-bind-html="currentTime"></p>
+      <p class="player__duration__remaining__lower" ng-bind-html="timeRemaining" ng-class="{ '--off': reverseRemaining }"></p>
+      <div class="player__progress__inner" ng-style="progressStyles">
+        <p class="player__duration__current__upper" ng-bind-html="currentTime"></p>
+        <p class="player__duration__remaining__upper" ng-bind-html="timeRemaining" ng-class="{ '--on': reverseRemaining }"></p>
+      </div>
+    </div>
+
+    <button class="player__next" ng-click="nextTrack()"><span class="vh">Next</button>
+  </section>
+
+  <aside class="sidebar" ng-controller="Sidebar">
+    <div class="sidebar__playlists" ng-controller="Playlists">
+      <ul>
+        <li class="playlist" ng-repeat="playlist in playlists" ng-class="{ '--disabled': ! playlist.tracks || ! playlist.tracks.length, '--active': playlist.activeTracks }">
+          <div class="playlist__title" ng-click="showPlaylist( $event, playlist )">
+            <img class="playlist__title__image" ng-if="playlist.image" ng-src="{{playlist.image}}" />
+            <p class="playlist__title__text" ng-bind-html="playlist.name"></p>
+          </div>
+          <div class="playlist__tracks">
+            <ul>
+              <li ng-repeat="track in playlist.activeTracks" repeat-done-event>
+                <p ng-bind-html="track.track.name" ng-click="playTrack( track.track )"></p>
+              </li>
+            </ul>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </aside>
+
+</article>

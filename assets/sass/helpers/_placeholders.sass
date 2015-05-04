@@ -1,0 +1,56 @@
+%button-reset
+  outline: 0
+  border: 0
+  padding: 0
+  margin: 0
+  border-radius: 0
+  text-align: left
+  background: transparent
+  box-shadow: none
+  font-size: inherit
+  cursor: pointer
+  color: inherit
+
+%group
+  &:after
+    content: ""
+    display: table
+    clear: both
+
+%sr-only
+  position: absolute
+  overflow: hidden
+  clip: rect(0 0 0 0)
+  height: 1px
+  width: 1px
+  margin: -1px
+  padding: 0
+  border: 0
+
+%width-restrict
+  +grid-wrap()
+
+  &.\--content
+    max-width: rem(1120px)
+    margin: 0 auto
+
+%icon
+  font-family: 'icons'
+  speak: none
+  font-style: normal
+  font-weight: normal
+  font-variant: normal
+  text-transform: none
+  line-height: 1
+  -webkit-font-smoothing: antialiased
+
+%centered-icon
+  position: absolute
+  top: 50%
+  left: 50%
+  margin:
+    top: -0.5em
+    left: -0.5em
+
+%remove-tap-highlight
+  -webkit-tap-highlight-color: rgba(0,0,0,0)

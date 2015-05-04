@@ -1,0 +1,53 @@
+.playlist
+  border-bottom: 1px solid #252525
+
+  &.\--active
+    background: #252525
+
+  &__title
+    @extend %clearfix
+    margin: 0.5rem 0
+    cursor: pointer
+    position: relative
+    display: table
+    line-height: 1rem
+    width: 100%
+    padding: 0.3rem 1rem 0.3rem 0.5rem
+    transition: 0.2s
+    font-size: 1rem
+
+    &:hover
+      background: #444
+
+    .\--disabled &
+      opacity: 0.3
+      cursor: default
+
+    &__image
+      float: left
+      display: table-cell
+
+    &__text
+      display: table-cell
+      vertical-align: middle
+      width: 80%
+      padding-left: 0.7rem
+
+  &__tracks
+    font-size: 0.8rem
+
+    li
+      cursor: pointer
+      transition: 0.2s
+      padding: 0 0.5rem
+
+      &:hover
+        background: #444
+
+        p
+          border-top-color: transparent
+
+      p
+        border-top: 1px solid #333
+        padding: 0.2rem 0
+        transition: 0.2s

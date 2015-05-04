@@ -1,0 +1,86 @@
+// Generates a CSS triangle using borders
+//
+// $pointy-side             - The word "top", "bottom", "left", "right". Used to indicate the direction the arrow faces.
+// $arrow-color             - The color hex at the bottom.
+// $transparent-border-size - Width of the transparent borders that effect how the triangle is rendered.
+// $color-border-size       - Width of the colored border that effect how the triangle is rendered.
+//
+// Compatible in Everything we support
+=triangle($pointy-side, $arrow-color, $transparent-border-size, $color-border-size)
+  border: $transparent-border-size solid transparent
+  border-#{$pointy-side}: 0
+  border-#{opposite-direction($pointy-side)}: $color-border-size solid $arrow-color
+
+// Generates either a min width, max-width, range, or retina media query
+//
+// $media-query - One of four keywords: "retina", "min", "max", "minmax". Depending on the word you will get that type of media query output.
+// $res       - The size for the breakpoint. Oftern this references a predefined variable. You should probably not have actual values in this field.
+// $res2        - Same as $res and only used for minmax media queries to get a range. $res is starting point and $res2 is ending point of the range.
+//
+// Compatible in IE9+, Everything else.
+=media($media-query, $res: 0em, $res2: 0em)
+  @if $media-query == retina
+    @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and ( min--moz-device-pixel-ratio: 2), only screen and ( -o-min-device-pixel-ratio: 2/1), only screen and ( min-device-pixel-ratio: 2), only screen and ( min-resolution: 192dpi), only screen and ( min-resolution: 2dppx)
+      @content
+
+  @if $media-query == min
+    @media screen and ( min-width: $res )
+      @content
+
+  @if $media-query == max
+    @media screen and ( max-width: $res )
+      @content
+
+// Generates values for grid columns. Only outputs width and padding. You must float them manually. This is done for the most flexibility when building out componenets.
+//
+// $column-span     - How many columns you would like to make.
+// map-get($grid, columns) - Total number of columns. Defaults to map-get($grid, columns) setup in helpers/_vars.sass
+// $grid-padding      - The padding or gutter of the grid. Defaults to map-get($grid, gutter) setup in helpers/_vars.sass
+//
+// Compatible in Everything we support
+=grid($column-span, $grid-columns: map-get($grid, columns), $grid-padding: map-get($grid, gutter) )
+  width: ( $column-span / $grid-columns ) * 100%
+  padding-left: $grid-padding
+  padding-right: $grid-padding
+
+// Used to wrap grid elements and clear them.
+//
+// Compatible in Everything we support
+=grid-wrap()
+  width: 100%
+  max-width: map-get($grid, max-width)
+  margin: 0 auto
+  @extend .group
+
+// Push or pull a grid element while leaving it in the flow of the document and effecting other gird elements.
+//
+// $column-span   - Number of columns you would like to push over.
+// $$grid-columns - Total number of columns. Defaults to map-get($grid, columns) setup in helpers/_vars.sass
+//
+// Compatible in Everything we support
+=grid-push($column-span, $grid-columns: map-get($grid, columns))
+  margin-left: ($column-span / $grid-columns) * 100%
+
+// Pull a grid element while leaving it in the flow of the document and effecting other gird elements.
+//
+// $column-span   - Number of columns you would like to push over.
+// $$grid-columns - Total number of columns. Defaults to map-get($grid, columns) setup in helpers/_vars.sass
+//
+// Compatible in Everything we support
+=grid-pull($column-span, $grid-columns: map-get($grid, columns))
+  margin-left: (($column-span / $grid-columns) * 100%) * -1
+
+// These are a slightly remixed version of the standard icon mixing from
+// Fontsmith - the difference is it only applies to the element ::before, so it
+// doesn't wreck the font on the whole element
+=icon-before($char)
+  &:before
+    @include icon-font-family($char)
+    @include icon-font()
+    @include icon-content($char)
+
+=icon-after($char)
+  &:after
+    @include icon-font-family($char)
+    @include icon-font()
+    @include icon-content($char)

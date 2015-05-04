@@ -1,0 +1,56 @@
+// Removes any unit(px, em, rem) from a number. Sometimes useful when trying to use a variable inside another mixin.
+//
+// $number - The number with unit you would like striped.
+@function strip-units($number)
+  @return $number / ($number * 0 + 1)
+
+// Converts a px based unit to em value.
+//
+// $target  - The value in px you would like converted
+// $context - The font size of the current context. This is required due to em cascading effect.
+@function em($target, $context: $base-font-size)
+  @if $target == 0
+    @return 0
+  @return $target / $context + 0em
+
+// Converts a em based unit to px value.
+//
+// $target  - The value in ems you would like converted
+// $context - The font size of the current context. This is required due to em cascading effect.
+@function px($target, $context: $base-font-size)
+  @if $target == 0
+    @return 0
+  @return strip-units($target) * $context
+
+// Converts a px based unit to rem value.
+//
+// $target  - The value in px you would like converted
+@function rem($target)
+  @if $target == 0
+    @return 0
+  @return $target / 16px + 0rem
+
+// Get the % width for grid columns.
+//
+// $column-count - Number of columns you would like the width for.
+// $context      - The current total number of columns the grid contains. Defaults to $grid-column-count found in helpers/_vars.sass
+@function column-width($column-count, $grid-columns: map-get($grid, columns))
+  @return ($column-count / $grid-columns) * 100%
+
+
+@function opposite-direction($direction)
+  $opposite-direction: center
+
+  @if $direction == top
+    $opposite-direction: bottom
+
+  @if $direction == bottom
+    $opposite-direction: top
+
+  @if $direction == left
+    $opposite-direction: right
+
+  @if $direction == right
+    $opposite-direction: left
+
+  @return $opposite-direction

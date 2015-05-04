@@ -1,0 +1,6 @@
+@each $sprite-name, $value in $sprites
+  %sprite-#{$sprite-name},
+  .sprite-#{$sprite-name}
+    +sprite(#{$sprite-name})
+    +media(retina)
+      +retina-sprite(#{$sprite-name})
