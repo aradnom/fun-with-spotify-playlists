@@ -1,10 +1,10 @@
 <article class="player-main">
 
-  <section class="search" ng-controller="Search">
+  <section class="content  --center  search" ng-controller="Search">
     <input type="text" class="search__query" ng-model="search.query" ng-keyup="runSearch()" placeholder="Search..." />
   </section>
 
-  <section class="player" ng-controller="Player" ng-class="{ '--playing': playing }">
+  <section class="content  --center  player" ng-controller="Player" ng-class="{ '--playing': playing }">
     <button class="player__play-pause" ng-click="playPause()" ng-class="{ '--stop': playing }"><span class="vh">Play/Pause</button>
     <button class="player__prev" ng-click="previousTrack()"><span class="vh">Previous</button>
 
@@ -20,7 +20,22 @@
     <button class="player__next" ng-click="nextTrack()"><span class="vh">Next</button>
   </section>
 
-  <aside class="sidebar" ng-controller="Sidebar">
+  <section class="content  --center  master-playlist" ng-controller="MasterPlaylist">
+    <div class="master-playlist__previous">
+
+    </div>
+    <div class="master-playlist__current-track">
+
+    </div>
+    <div class="dropzone" ng-controller="Dropzone" data-drop="true" ng-class="{ '--active': active }" jqyoui-droppable="{ onDrop: 'dragDrop' }">drop</div>
+    <ul>
+      <li ng-repeat="track in tracks track by $index">
+        <p ng-bind-html="track.name"></p>
+      </li>
+    </ul>
+  </section>
+
+  <aside class="sidebar" ng-controller="TrackSidebar">
     <div class="sidebar__playlists" ng-controller="Playlists">
       <ul>
         <li class="playlist" ng-repeat="playlist in playlists" ng-class="{ '--disabled': ! playlist.tracks || ! playlist.tracks.length, '--active': playlist.activeTracks }">
@@ -30,14 +45,18 @@
           </div>
           <div class="playlist__tracks">
             <ul>
-              <li ng-repeat="track in playlist.activeTracks" repeat-done-event>
-                <p ng-bind-html="track.track.name" ng-click="playTrack( track.track )"></p>
+              <li ng-repeat="track in playlist.activeTracks" data-drag="true" jqyoui-draggable="{ animate: true, onStart: 'dragStart( track )', onStop: 'dragStop( track )' }" data-jqyoui-options="{ appendTo: 'body', helper: 'clone' }" repeat-done-event>
+                <p ng-bind-html="track.track.name" ng-dblclick="playTrack( track.track )"></p>
               </li>
             </ul>
           </div>
         </li>
       </ul>
     </div>
+  </aside>
+
+  <aside class="sidebar  --right">
+    <p>Some'n sure gonna happen in here eventually.</p>
   </aside>
 
 </article>

@@ -36,7 +36,10 @@ body { background: #222; color: #aaa; font-family: "Jaldi"; }
 input[type="text"] { font-family: "Jaldi"; border: none; background: #333; color: #888; padding: 0.4rem 0.6rem; font-size: 1rem; transition: 0.2s; }
 input[type="text"]:focus { background: #444; }
 
+.content.\--center { width: 30rem; margin-left: auto; margin-right: auto; }
+
 .sidebar { position: fixed; top: 0; left: 0; height: 100%; overflow-y: auto; width: 20rem; background: #333; }
+.sidebar.\--right { left: auto; right: 0; }
 
 .playlist { border-bottom: 1px solid #252525; }
 .playlist.\--active { background: #252525; }
@@ -51,8 +54,8 @@ input[type="text"]:focus { background: #444; }
 .playlist__tracks li:hover p { border-top-color: transparent; }
 .playlist__tracks li p { border-top: 1px solid #333; padding: 0.2rem 0; transition: 0.2s; }
 
-.search { width: 100%; margin-top: 2rem; }
-.search__query { margin: 0 auto; display: block; width: 25rem; }
+.search { margin-top: 2rem; }
+.search__query { margin: 0 auto; display: block; width: 100%; }
 .search__query::-webkit-input-placeholder { color: #222; }
 .search__query::-moz-placeholder { color: #222; }
 .search__query:-ms-input-placeholder { color: #222; }
@@ -78,5 +81,8 @@ input[type="text"]:focus { background: #444; }
 .player__progress { width: 0; height: 2rem; transition: 0.3s ease-out; position: relative; }
 .player.\--playing .player__progress { width: 18.4rem; background: #333; }
 .player__progress__inner { position: absolute; top: 0; left: 0; width: 0; height: 100%; background: #2ebd59; transition-timing-function: linear; z-index: 10; overflow: hidden; }
+
+.dropzone { overflow: hidden; font-size: 1rem; text-transform: uppercase; text-align: center; transition: 0.2s; background-color: rgba(50, 50, 50, 0); color: #222; height: 0; padding-top: 1.2rem; position: relative; top: 2rem; }
+.dropzone.\--active { background-color: #323232; height: 4rem; top: 0; }
 
 /*# sourceMappingURL=application.css.map */

@@ -47,6 +47,14 @@ App.controller( 'Playlists', [ '$scope', '$rootScope', '$element', 'spotifyApi',
     $rootScope.$broadcast( 'playTrack', track );
   };
 
+  $scope.dragStart = function ( $event, ui, track ) {
+    $rootScope.$broadcast( 'dragStart', track );
+  };
+
+  $scope.dragStop = function ( $event, ui, track ) {
+    $rootScope.$broadcast( 'dragStop', track );
+  };
+
 
   /////////////////////////////////////////////////////////////////////////////
   // Internal functions ///////////////////////////////////////////////////////

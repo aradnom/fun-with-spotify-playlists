@@ -1,7 +1,7 @@
 /**
  * Controller for The Player.
  */
-App.controller( 'Player', [ '$scope', '$rootScope', '$element', 'spotifyHelper', 'utility', '$interval', function ( $scope, $rootScope, $element, spotifyHelper, utility, $interval ) {
+App.controller( 'Player', [ '$scope', '$rootScope', '$element', 'spotifyHelper', 'utility', '$interval', '$timeout', function ( $scope, $rootScope, $element, spotifyHelper, utility, $interval, $timeout ) {
 
   /////////////////////////////////////////////////////////////////////////////
   // Init /////////////////////////////////////////////////////////////////////
@@ -104,22 +104,24 @@ App.controller( 'Player', [ '$scope', '$rootScope', '$element', 'spotifyHelper',
    * Clear all progress-related status "stuff."
    */
   function clearProgress () {
+    var $progress = $element.find( '.player__progress__inner' );
+
     // Reset counters
     $scope.currentTime   = null;
     $scope.timeRemaining = null;
 
-    // Reset styles
-    $scope.progressStyles = {
-      'transition-duration': '',
-      '-moz-transition-duration': '',
-      '-webkit-transition-duration': '',
-      '-o-transition-duration': '',
-      '-ms-transition-duration': ''
-    };
+    // Reset styles - with regular jQuery because we actually need this to go
+    // through right-the-hell-now, not when-digest-gets-around-to-it.
+    $progress.css({
+      'transition-duration': '0',
+      '-moz-transition-duration': '0',
+      '-webkit-transition-duration': '0',
+      '-o-transition-duration': '0',
+      '-ms-transition-duration': '0'
+    });
 
-    $scope.progressStyles.width = '0';
-
-    $scope.safeApply();
+    // This will kill a CSS transition mid-progress
+    $progress.width( 0 ).hide().show( 0 );
 
     // As well as progress counter
     if ( progressTimer ) {
@@ -138,6 +140,8 @@ App.controller( 'Player', [ '$scope', '$rootScope', '$element', 'spotifyHelper',
    * @param {Object} track Spotify Track object
    */
   function startPlayerProgress ( track ) {
+    var $progress = $element.find( '.player__progress__inner' );
+
     // Clear progress before doing anything else
     clearProgress();
 
@@ -145,16 +149,16 @@ App.controller( 'Player', [ '$scope', '$rootScope', '$element', 'spotifyHelper',
     var duration = Math.round( track.duration_ms / 1000 );
 
     // Set progress styles
-    $scope.progressStyles = {
+    $progress.css({
       'transition-duration': duration.toString() + 's',
       '-moz-transition-duration': duration.toString() + 's',
       '-webkit-transition-duration': duration.toString() + 's',
       '-o-transition-duration': duration.toString() + 's',
       '-ms-transition-duration': duration.toString() + 's'
-    };
+    });
 
     // And set width
-    $scope.progressStyles.width = '100%';
+    $progress.width( '100%' );
 
     // Set up progress counting
     var progress         = 0;

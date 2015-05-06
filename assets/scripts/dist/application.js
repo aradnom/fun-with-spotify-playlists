@@ -1,7 +1,7 @@
 'use strict';
 
 // Declare app level module which depends on filters, and services
-var App = angular.module('App', [ 'ngSanitize', 'ngResource', 'spotify', 'LocalStorageModule', 'ngCookies', 'debounce', 'angular-cache' ]);
+var App = angular.module('App', [ 'ngSanitize', 'ngResource', 'spotify', 'LocalStorageModule', 'ngCookies', 'debounce', 'angular-cache', 'ngDragDrop' ]);
 
 /**
  * App-wide config(s).
@@ -598,10 +598,46 @@ App.service( 'utility', [ function () {
 }]);
 
 /**
- * Controller for the main playlist.
+ * Controller for areas that can receive dropped tracks.
  */
-App.controller( 'ActivePlaylist', [ '$scope', '$element', function ( $scope, $element ) {
+App.controller( 'Dropzone', [ '$scope', '$element', function ( $scope, $element ) {
+  // Assume dropzone is inactive to start
+  $scope.active = false;
 
+  // Keep track of the last dropped track for propagating to other controllers
+  var droppedTrack = null;
+
+  // On drag start event, set dropzone to active
+  $scope.$on( 'dragStart', function () {
+    // Update dropzone states
+    $scope.active = true;
+
+    $scope.safeApply();
+  });
+
+  // On drag stop, reset active status
+  $scope.$on( 'dragStop', function ( $event, track ) {
+    // Save reference to the track in case we want to use it later
+    droppedTrack = track;
+
+    // Update dropzone states
+    $scope.active = false;
+
+    $scope.safeApply();
+  });
+
+  /////////////////////////////////////////////////////////////////////////////
+  // Scope functions //////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////
+
+  $scope.dragDrop = function () {
+    // Drop successful, so emit an event to controllers above with the dropped
+    // track
+    $scope.$emit( 'trackDropped', droppedTrack );
+
+    // Also reset droppedTrack for next time
+    droppedTrack = null;
+  };
 }]);
 
 /**
@@ -649,9 +685,22 @@ App.controller( 'Main', [ '$scope', '$element', 'spotifyHelper', '$timeout', 'Sp
 }]);
 
 /**
+ * Controller for the main playlist.
+ */
+App.controller( 'MasterPlaylist', [ '$scope', '$element', function ( $scope, $element ) {
+  // Set up empty list of tracks
+  $scope.tracks = [];
+
+  $scope.$on( 'trackDropped', function ( $event, track ) {
+    // Add the track to the active playlist
+    $scope.tracks.push( track.track );
+  });
+}]);
+
+/**
  * Controller for The Player.
  */
-App.controller( 'Player', [ '$scope', '$rootScope', '$element', 'spotifyHelper', 'utility', '$interval', function ( $scope, $rootScope, $element, spotifyHelper, utility, $interval ) {
+App.controller( 'Player', [ '$scope', '$rootScope', '$element', 'spotifyHelper', 'utility', '$interval', '$timeout', function ( $scope, $rootScope, $element, spotifyHelper, utility, $interval, $timeout ) {
 
   /////////////////////////////////////////////////////////////////////////////
   // Init /////////////////////////////////////////////////////////////////////
@@ -754,22 +803,24 @@ App.controller( 'Player', [ '$scope', '$rootScope', '$element', 'spotifyHelper',
    * Clear all progress-related status "stuff."
    */
   function clearProgress () {
+    var $progress = $element.find( '.player__progress__inner' );
+
     // Reset counters
     $scope.currentTime   = null;
     $scope.timeRemaining = null;
 
-    // Reset styles
-    $scope.progressStyles = {
-      'transition-duration': '',
-      '-moz-transition-duration': '',
-      '-webkit-transition-duration': '',
-      '-o-transition-duration': '',
-      '-ms-transition-duration': ''
-    };
+    // Reset styles - with regular jQuery because we actually need this to go
+    // through right-the-hell-now, not when-digest-gets-around-to-it.
+    $progress.css({
+      'transition-duration': '0',
+      '-moz-transition-duration': '0',
+      '-webkit-transition-duration': '0',
+      '-o-transition-duration': '0',
+      '-ms-transition-duration': '0'
+    });
 
-    $scope.progressStyles.width = '0';
-
-    $scope.safeApply();
+    // This will kill a CSS transition mid-progress
+    $progress.width( 0 ).hide().show( 0 );
 
     // As well as progress counter
     if ( progressTimer ) {
@@ -788,6 +839,8 @@ App.controller( 'Player', [ '$scope', '$rootScope', '$element', 'spotifyHelper',
    * @param {Object} track Spotify Track object
    */
   function startPlayerProgress ( track ) {
+    var $progress = $element.find( '.player__progress__inner' );
+
     // Clear progress before doing anything else
     clearProgress();
 
@@ -795,16 +848,16 @@ App.controller( 'Player', [ '$scope', '$rootScope', '$element', 'spotifyHelper',
     var duration = Math.round( track.duration_ms / 1000 );
 
     // Set progress styles
-    $scope.progressStyles = {
+    $progress.css({
       'transition-duration': duration.toString() + 's',
       '-moz-transition-duration': duration.toString() + 's',
       '-webkit-transition-duration': duration.toString() + 's',
       '-o-transition-duration': duration.toString() + 's',
       '-ms-transition-duration': duration.toString() + 's'
-    };
+    });
 
     // And set width
-    $scope.progressStyles.width = '100%';
+    $progress.width( '100%' );
 
     // Set up progress counting
     var progress         = 0;
@@ -883,6 +936,14 @@ App.controller( 'Playlists', [ '$scope', '$rootScope', '$element', 'spotifyApi',
     $rootScope.$broadcast( 'playTrack', track );
   };
 
+  $scope.dragStart = function ( $event, ui, track ) {
+    $rootScope.$broadcast( 'dragStart', track );
+  };
+
+  $scope.dragStop = function ( $event, ui, track ) {
+    $rootScope.$broadcast( 'dragStop', track );
+  };
+
 
   /////////////////////////////////////////////////////////////////////////////
   // Internal functions ///////////////////////////////////////////////////////
@@ -930,7 +991,7 @@ App.controller( 'Search', [ '$scope', '$element', 'spotifyApi', 'debounce', func
 /**
  * Sidebar controller.
  */
-App.controller( 'Sidebar', [ '$scope', '$element', 'Spotify', function ( $scope, $element, Spotify ) {
+App.controller( 'TrackSidebar', [ '$scope', '$element', 'Spotify', function ( $scope, $element, Spotify ) {
 
 }]);
 

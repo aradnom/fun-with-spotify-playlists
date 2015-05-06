@@ -37,10 +37,7 @@ config.reload = {
     ['../assets/styles/application.css'],
 
     // Templates - reload is the only task we need to run on these
-    [
-      '../*.php',
-      '../partials/*.php'
-    ]
+    ['../views/**/*.html']
   ),
   options: {
     spawn: false,
