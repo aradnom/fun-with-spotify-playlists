@@ -82,11 +82,12 @@ App.controller( 'Player', [ '$scope', '$rootScope', '$element', 'spotifyHelper',
    * @param {Object} response Response object from play or status request
    */
   function setPlayerStatusPlaying ( track, response ) {
-    console.log( track, response );
-
     $scope.playing = true;
 
     startPlayerProgress( track );
+
+    // Tell the world
+    $rootScope.$broadcast( 'playerPlaying' );
   }
 
   /**
@@ -98,6 +99,9 @@ App.controller( 'Player', [ '$scope', '$rootScope', '$element', 'spotifyHelper',
 
     // Update player progress
     stopPlayerProgress();
+
+    // Tell the world
+    $rootScope.$broadcast( 'playerStopped' );
   }
 
   /**

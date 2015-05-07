@@ -1,0 +1,49 @@
+.master-playlist
+  margin-top: 1rem
+
+  &__current-track
+    background: #333
+    @extend %clearfix
+    opacity: 0.5
+    transition: 0.2s
+
+    &.\--active
+      opacity: 1
+
+      img
+        filter: saturate(100%)
+
+    img
+      width: 10rem
+      float: left
+      filter: saturate(0%)
+      transition: 0.2s
+
+    &__content
+      position: relative
+      top: 0.6rem
+      left: 1rem
+      font-size: 1.5rem
+      -webkit-font-smoothing: antialiased
+
+      strong
+        text-transform: uppercase
+        font-size: 2.2rem
+        line-height: 2.2rem
+        display: block
+        padding-right: 1rem
+        margin-top: -0.3rem
+
+  &__tracks
+    position: relative
+    z-index: 5
+
+    &__track
+      cursor: pointer
+
+      strong
+        font-size: 1.2rem
+
+      &__divider
+        display: inline-block
+        margin: 0 0.4rem

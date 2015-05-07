@@ -1,7 +1,7 @@
 /**
  * Service for loading all the stuff we'll need and caching it for use later.
  */
-App.service( 'resources', [ '$rootScope', 'spotifyConfig', 'spotifyApi', 'CacheFactory', '$q', function ( $rootScope, spotifyConfig, spotifyApi, CacheFactory, $q ) {
+App.service( 'resources', [ '$rootScope', 'spotifyConfig', 'spotifyApi', 'spotifyUtility', 'CacheFactory', '$q', function ( $rootScope, spotifyConfig, spotifyApi, spotifyUtility, CacheFactory, $q ) {
   // Top-level object for all resource types
   $rootScope.resources = {
     playlists: null
@@ -23,7 +23,7 @@ App.service( 'resources', [ '$rootScope', 'spotifyConfig', 'spotifyApi', 'CacheF
   });
 
   // Force cache clear if necessary
-  //cache.removeAll();
+  // cache.removeAll();
 
   // Build initial resource set if needed
   initResources();
@@ -92,11 +92,13 @@ App.service( 'resources', [ '$rootScope', 'spotifyConfig', 'spotifyApi', 'CacheF
                 playlist.tracks    = tracks;
 
                 if ( count === playlists.total ) {
-                  // All done, cache everything and set resources
-                  cache.put( 'playlists', playlists.items );
+                  // All done - format data, cache everything and set resources
+                  var formattedPlaylists = formatPlaylists( playlists.items );
+
+                  cache.put( 'playlists', formattedPlaylists );
 
                   // And set resource
-                  $rootScope.resources.playlists = playlists.items;
+                  $rootScope.resources.playlists = formattedPlaylists;
                 }
               })
               .finally( function () {
@@ -105,5 +107,35 @@ App.service( 'resources', [ '$rootScope', 'spotifyConfig', 'spotifyApi', 'CacheF
           });
         }
       });
+  }
+
+  /**
+   * Given an array of playlists, do a bit of formatting of the data for
+   * display.
+   *
+   * @param  {Array} playlists Array of playlists from Spotify API
+   * @return {Array}           Returns formatted array of playlists
+   */
+  function formatPlaylists ( playlists ) {
+    playlists.forEach( function ( playlist ) {
+      // Track formatting
+      if ( playlist.tracks && playlist.tracks.length ) {
+        playlist.tracks.forEach( function ( track ) {
+          // Put together display-friendly track titles
+          var title   = track.track.name;
+          var artists = track.track.artists.map( function ( artist ) {
+            return artist.name;
+          });
+
+          track.track.artist_string  = artists.join( ', ' );
+          track.track.playlist_title = track.track.artist_string + ' - ' + title;
+
+          // Get reference thumbnail
+          track.track.thumbnail      = spotifyUtility.getTrackThumbnail( track.track, 300, true );
+        });
+      }
+    });
+
+    return playlists;
   }
 }]);

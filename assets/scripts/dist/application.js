@@ -46,7 +46,7 @@ App.service( 'getTokens', [ '$http', '$q', function ( $http, $q ) {
 /**
  * Service for loading all the stuff we'll need and caching it for use later.
  */
-App.service( 'resources', [ '$rootScope', 'spotifyConfig', 'spotifyApi', 'CacheFactory', '$q', function ( $rootScope, spotifyConfig, spotifyApi, CacheFactory, $q ) {
+App.service( 'resources', [ '$rootScope', 'spotifyConfig', 'spotifyApi', 'spotifyUtility', 'CacheFactory', '$q', function ( $rootScope, spotifyConfig, spotifyApi, spotifyUtility, CacheFactory, $q ) {
   // Top-level object for all resource types
   $rootScope.resources = {
     playlists: null
@@ -68,7 +68,7 @@ App.service( 'resources', [ '$rootScope', 'spotifyConfig', 'spotifyApi', 'CacheF
   });
 
   // Force cache clear if necessary
-  //cache.removeAll();
+  // cache.removeAll();
 
   // Build initial resource set if needed
   initResources();
@@ -137,11 +137,13 @@ App.service( 'resources', [ '$rootScope', 'spotifyConfig', 'spotifyApi', 'CacheF
                 playlist.tracks    = tracks;
 
                 if ( count === playlists.total ) {
-                  // All done, cache everything and set resources
-                  cache.put( 'playlists', playlists.items );
+                  // All done - format data, cache everything and set resources
+                  var formattedPlaylists = formatPlaylists( playlists.items );
+
+                  cache.put( 'playlists', formattedPlaylists );
 
                   // And set resource
-                  $rootScope.resources.playlists = playlists.items;
+                  $rootScope.resources.playlists = formattedPlaylists;
                 }
               })
               .finally( function () {
@@ -150,6 +152,36 @@ App.service( 'resources', [ '$rootScope', 'spotifyConfig', 'spotifyApi', 'CacheF
           });
         }
       });
+  }
+
+  /**
+   * Given an array of playlists, do a bit of formatting of the data for
+   * display.
+   *
+   * @param  {Array} playlists Array of playlists from Spotify API
+   * @return {Array}           Returns formatted array of playlists
+   */
+  function formatPlaylists ( playlists ) {
+    playlists.forEach( function ( playlist ) {
+      // Track formatting
+      if ( playlist.tracks && playlist.tracks.length ) {
+        playlist.tracks.forEach( function ( track ) {
+          // Put together display-friendly track titles
+          var title   = track.track.name;
+          var artists = track.track.artists.map( function ( artist ) {
+            return artist.name;
+          });
+
+          track.track.artist_string  = artists.join( ', ' );
+          track.track.playlist_title = track.track.artist_string + ' - ' + title;
+
+          // Get reference thumbnail
+          track.track.thumbnail      = spotifyUtility.getTrackThumbnail( track.track, 300, true );
+        });
+      }
+    });
+
+    return playlists;
   }
 }]);
 
@@ -553,6 +585,43 @@ App.service( 'spotifyHelper', [ '$http', '$q', 'getTokens', '$rootScope', 'templ
 }]);
 
 /**
+ * Service for misc. Spotify functionality.
+ */
+App.service( 'spotifyUtility', [ function () {
+  return {
+    /**
+     * Given a Spotify track object, return thumbnail of the specified size.
+     * If the size cannot be found and fallback is true, just return the first
+     * available image instead.
+     *
+     * @param  {Object}  track    Spotify track object
+     * @param  {Integer} size     Desired thumbnail size.  Valid options:
+     * 64, 300, 640
+     * @param  {Boolean} fallback Pass true to fall back to first available
+     * image if desired size cannot be found.
+     * @return {String}           Returns thumbnail URI if it exists
+     */
+    getTrackThumbnail: function ( track, size, fallback ) {
+      if ( track.album && track.album.images && track.album.images.length ) {
+        var thumbnail = track.album.images.filter( function ( image ) {
+          return image.width === size;
+        });
+
+        if ( thumbnail.length ) {
+          return thumbnail[0].url;
+        }
+
+        // Just return the first available image then
+        return track.album.images[0].url;
+      }
+
+      // Guess it didn't work out
+      return null;
+    }
+  };
+}]);
+
+/**
  * Global object for simple Underscore templates.
  */
 App.service( 'templates', [ 'spotifyConfig', function ( spotifyConfig ) {
@@ -618,7 +687,7 @@ App.controller( 'Dropzone', [ '$scope', '$element', function ( $scope, $element 
   // On drag stop, reset active status
   $scope.$on( 'dragStop', function ( $event, track ) {
     // Save reference to the track in case we want to use it later
-    droppedTrack = track;
+    droppedTrack = track.track;
 
     // Update dropzone states
     $scope.active = false;
@@ -637,6 +706,25 @@ App.controller( 'Dropzone', [ '$scope', '$element', function ( $scope, $element 
 
     // Also reset droppedTrack for next time
     droppedTrack = null;
+
+    // And reset hover state just in case
+    $scope.hover = false;
+
+    $scope.safeApply();
+  };
+
+  // Set hover state on mouseover
+  $scope.dragOver = function () {
+    $scope.hover = true;
+
+    $scope.safeApply();
+  };
+
+  // Remove hover state on mouseout
+  $scope.dragOut = function () {
+    $scope.hover = false;
+
+    $scope.safeApply();
   };
 }]);
 
@@ -687,14 +775,60 @@ App.controller( 'Main', [ '$scope', '$element', 'spotifyHelper', '$timeout', 'Sp
 /**
  * Controller for the main playlist.
  */
-App.controller( 'MasterPlaylist', [ '$scope', '$element', function ( $scope, $element ) {
-  // Set up empty list of tracks
-  $scope.tracks = [];
+App.controller( 'MasterPlaylist', [ '$scope', '$element', '$rootScope', 'localStorageService', function ( $scope, $element, $rootScope, localStorageService ) {
+  // No track is playing to start
+  $scope.currentTrack = null;
+
+  // Set up the master list of tracks - load from cache if available
+  $scope.tracks = localStorageService.get( 'playerMasterPlaylist' );
+
+  if ( ! $scope.tracks ) { $scope.tracks = []; }
+
+  /////////////////////////////////////////////////////////////////////////////
+  // Internal functions ///////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////
+
+  $scope.playTrack = function ( track ) {
+    // Tell the player to play the track
+    $rootScope.$broadcast( 'playTrack', track );
+  };
 
   $scope.$on( 'trackDropped', function ( $event, track ) {
-    // Add the track to the active playlist
-    $scope.tracks.push( track.track );
+    // Add the track
+    addToPlaylist( track );
   });
+
+  // On play track event, display track as the current track
+  $scope.$on( 'playTrack', function ( $event, track ) {
+    $scope.currentTrack = track;
+  });
+
+  // On player playing, set current item to active
+  $scope.$on( 'playerPlaying', function () {
+    $scope.playing = true;
+  });
+
+  // On player stopped, set current item to inactive
+  $scope.$on( 'playerStopped', function () {
+    $scope.playing = false;
+  });
+
+  /////////////////////////////////////////////////////////////////////////////
+  // Internal functions ///////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Add to the master playlist and update the track cache appropriately
+   *
+   * @param {Object} track Spotify track object
+   */
+  function addToPlaylist ( track ) {
+    // Add track to the master list
+    $scope.tracks.push( track );
+
+    // And update the cache
+    localStorageService.set( 'playerMasterPlaylist', $scope.tracks );
+  }
 }]);
 
 /**
@@ -781,11 +915,12 @@ App.controller( 'Player', [ '$scope', '$rootScope', '$element', 'spotifyHelper',
    * @param {Object} response Response object from play or status request
    */
   function setPlayerStatusPlaying ( track, response ) {
-    console.log( track, response );
-
     $scope.playing = true;
 
     startPlayerProgress( track );
+
+    // Tell the world
+    $rootScope.$broadcast( 'playerPlaying' );
   }
 
   /**
@@ -797,6 +932,9 @@ App.controller( 'Player', [ '$scope', '$rootScope', '$element', 'spotifyHelper',
 
     // Update player progress
     stopPlayerProgress();
+
+    // Tell the world
+    $rootScope.$broadcast( 'playerStopped' );
   }
 
   /**

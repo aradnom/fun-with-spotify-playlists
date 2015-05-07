@@ -19,7 +19,7 @@ App.controller( 'Dropzone', [ '$scope', '$element', function ( $scope, $element 
   // On drag stop, reset active status
   $scope.$on( 'dragStop', function ( $event, track ) {
     // Save reference to the track in case we want to use it later
-    droppedTrack = track;
+    droppedTrack = track.track;
 
     // Update dropzone states
     $scope.active = false;
@@ -38,5 +38,24 @@ App.controller( 'Dropzone', [ '$scope', '$element', function ( $scope, $element 
 
     // Also reset droppedTrack for next time
     droppedTrack = null;
+
+    // And reset hover state just in case
+    $scope.hover = false;
+
+    $scope.safeApply();
+  };
+
+  // Set hover state on mouseover
+  $scope.dragOver = function () {
+    $scope.hover = true;
+
+    $scope.safeApply();
+  };
+
+  // Remove hover state on mouseout
+  $scope.dragOut = function () {
+    $scope.hover = false;
+
+    $scope.safeApply();
   };
 }]);

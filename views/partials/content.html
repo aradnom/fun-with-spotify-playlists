@@ -24,13 +24,19 @@
     <div class="master-playlist__previous">
 
     </div>
-    <div class="master-playlist__current-track">
-
+    <div class="master-playlist__current-track" ng-show="currentTrack" ng-class="{ '--active': playing }">
+      <img ng-src="{{currentTrack.thumbnail}}" border="0" />
+      <div class="master-playlist__current-track__content">
+        <strong ng-bind-html="currentTrack.name"></strong>
+        <p ng-bind-html="currentTrack.artist_string"></p>
+      </div>
     </div>
-    <div class="dropzone" ng-controller="Dropzone" data-drop="true" ng-class="{ '--active': active }" jqyoui-droppable="{ onDrop: 'dragDrop' }">drop</div>
-    <ul>
-      <li ng-repeat="track in tracks track by $index">
-        <p ng-bind-html="track.name"></p>
+    <div class="dropzone" ng-controller="Dropzone" data-drop="true" ng-class="{ '--active': active, '--hover': hover }" jqyoui-droppable="{ onDrop: 'dragDrop', onOver: 'dragOver', onOut: 'dragOut' }">drop</div>
+    <ul class="master-playlist__tracks">
+      <li class="master-playlist__tracks__track" ng-repeat="track in tracks track by $index" ng-dblclick="playTrack( track )">
+        <strong ng-bind-html="track.name"></strong>
+        <span class="master-playlist__tracks__track__divider" ng-bind-html="' - '"></span>
+        <span ng-bind-html="track.artist_string"></span>
       </li>
     </ul>
   </section>
@@ -45,8 +51,8 @@
           </div>
           <div class="playlist__tracks">
             <ul>
-              <li ng-repeat="track in playlist.activeTracks" data-drag="true" jqyoui-draggable="{ animate: true, onStart: 'dragStart( track )', onStop: 'dragStop( track )' }" data-jqyoui-options="{ appendTo: 'body', helper: 'clone' }" repeat-done-event>
-                <p ng-bind-html="track.track.name" ng-dblclick="playTrack( track.track )"></p>
+              <li class="playlist__tracks__track" ng-repeat="track in playlist.activeTracks" data-drag="true" jqyoui-draggable="{ animate: true, onStart: 'dragStart( track )', onStop: 'dragStop( track )' }" data-jqyoui-options="{ appendTo: 'body', helper: 'clone' }" repeat-done-event>
+                <p ng-bind-html="track.track.playlist_title" ng-dblclick="playTrack( track.track )"></p>
               </li>
             </ul>
           </div>
