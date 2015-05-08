@@ -1,7 +1,25 @@
 <article class="player-main">
 
-  <section class="content  --center  search" ng-controller="Search">
+  <section class="content  --center  --fixed  search" ng-controller="Search">
     <input type="text" class="search__query" ng-model="search.query" ng-keyup="runSearch()" placeholder="Search..." />
+    <div class="search__results">
+      <div class="search__results__content">
+        <h4>Tracks</h4>
+        <ul class="search__results__tracks">
+          <li ng-repeat="row in results.tracks.items.slice( 0, 10 )" ng-bind-html="row.name" repeat-done-event></li>
+        </ul>
+
+        <h4>Artists</h4>
+        <ul class="search__results__artists">
+          <li ng-repeat="row in results.artists.items.slice( 0, 10 )" ng-bind-html="row.name" repeat-done-event></li>
+        </ul>
+
+        <h4>Albums</h4>
+        <ul class="search__results__albums">
+          <li ng-repeat="row in results.albums.items.slice( 0, 10 )" ng-bind-html="row.name" repeat-done-event></li>
+        </ul>
+      </div>
+    </div>
   </section>
 
   <section class="content  --center  player" ng-controller="Player" ng-class="{ '--playing': playing }">
