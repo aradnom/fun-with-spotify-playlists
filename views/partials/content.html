@@ -1,7 +1,8 @@
 <article class="player-main">
 
-  <section class="content  --center  --fixed  search" ng-controller="Search">
-    <input type="text" class="search__query" ng-model="search.query" ng-keyup="runSearch()" placeholder="Search..." />
+  <section class="content  --center  --fixed  search" ng-controller="Search" ng-class="{ '--focus': focus }">
+    <input type="text" class="search__query" placeholder="Search..." ng-model="search.query" ng-keyup="runSearch()" ng-focus="focus = true" ng-blur="focus = false" />
+    <button class="search__close" ng-click="closeSearch()"><span class="vh">Close search</span></button>
     <div class="search__results">
       <div class="search__results__content">
         <h4>Tracks</h4>

@@ -30,9 +30,7 @@ App.controller( 'Search', [ '$scope', '$element', 'spotifyApi', 'debounce', func
               unsubscribe();
 
               // Slide in results
-              $results
-                .velocity( 'stop', true )
-                .velocity( 'slideDown', { duration: 200 } );
+              openSearchResults();
             }
           });
 
@@ -41,11 +39,29 @@ App.controller( 'Search', [ '$scope', '$element', 'spotifyApi', 'debounce', func
         })
     } else {
       // Slide out results
-      $results
-        .velocity( 'stop', true )
-        .velocity( 'slideUp', { duration: 200, complete: function () {
-          $scope.results = null;
-        }});
+      closeSearchResults();
     }
   }, 300 );
+
+  $scope.closeSearch = function () {
+    closeSearchResults();
+  };
+
+  /////////////////////////////////////////////////////////////////////////////
+  // Internal functions ///////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////
+
+  function openSearchResults () {
+    $results
+      .velocity( 'stop', true )
+      .velocity( 'slideDown', { duration: 200 } );
+  }
+
+  function closeSearchResults () {
+    $results
+      .velocity( 'stop', true )
+      .velocity( 'slideUp', { duration: 200, complete: function () {
+        $scope.results = null;
+      }});
+  }
 }]);
