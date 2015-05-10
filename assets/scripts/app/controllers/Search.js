@@ -1,7 +1,7 @@
 /**
  * Search controller.  It controls the search.
  */
-App.controller( 'Search', [ '$scope', '$element', 'spotifyApi', 'debounce', function ( $scope, $element, spotifyApi, debounce ) {
+App.controller( 'Search', [ '$scope', '$rootScope', '$element', 'spotifyApi', 'debounce', 'spotifyUtility', function ( $scope, $rootScope, $element, spotifyApi, debounce, spotifyUtility ) {
   // Create blank object for search query
   $scope.search = {};
 
@@ -45,6 +45,11 @@ App.controller( 'Search', [ '$scope', '$element', 'spotifyApi', 'debounce', func
 
   $scope.closeSearch = function () {
     closeSearchResults();
+  };
+
+  // Tells the master playlist to add the track
+  $scope.addToPlaylist = function ( track ) {
+    $rootScope.$broadcast( 'addToMasterPlaylist', spotifyUtility.formatTrack( track ) );
   };
 
   /////////////////////////////////////////////////////////////////////////////

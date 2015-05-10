@@ -81,9 +81,15 @@ input[type="text"]:focus { background: #444; }
 .\--focus .search__close { top: 1rem; opacity: 1; cursor: pointer; }
 .search__results { display: none; background: #333; width: 100%; overflow-y: auto; max-height: 20rem; }
 .search__results h4 { padding-bottom: 0.2rem; padding-left: 1rem; border-bottom: 1px solid #444; }
-.search__results ul { margin-bottom: 0.5rem; }
-.search__results li { cursor: pointer; transition: 0.2s; padding-left: 2rem; padding-right: 1rem; }
-.search__results li:hover { background: #444; }
+.search__results__tracks { margin-bottom: 0.5rem; }
+.search__results__track { cursor: pointer; transition: 0.2s; padding-left: 2rem; padding-right: 2rem; position: relative; }
+.search__results__track:hover { background: #444; }
+.search__results__track:hover .search__results__track__menu { opacity: 1; }
+.search__results__track:hover .search__results__track__menu > * { -webkit-transform: rotate(0deg); -ms-transform: rotate(0deg); transform: rotate(0deg); }
+.search__results__track__menu { position: absolute; top: 0.125rem; right: 0.5rem; opacity: 0; transition: 0.2s; }
+.search__results__track__menu > * { transition: 0.3s; -webkit-transform: rotate(90deg); -ms-transform: rotate(90deg); transform: rotate(90deg); }
+.search__results__track__menu__add:before { font-family: "icons"; speak: none; font-style: normal; font-weight: normal; font-variant: normal; text-transform: none; line-height: 1; -webkit-font-smoothing: antialiased; content: ""; }
+.search__results__track__menu__add:hover { color: #5FD052; }
 .search__results__content { padding: 1rem 0; }
 
 .player { text-align: center; margin-top: 1rem; opacity: 0.5; transition: 0.2s; }

@@ -48,17 +48,41 @@
       padding-left: 1rem
       border-bottom: 1px solid #444
 
-    ul
+    &__tracks
       margin-bottom: 0.5rem
 
-    li
+    &__track
       cursor: pointer
       transition: 0.2s
       padding-left: 2rem
-      padding-right: 1rem
+      padding-right: 2rem
+      position: relative
 
       &:hover
         background: #444
+
+        .search__results__track__menu
+          opacity: 1
+
+          > *
+            transform: rotate(0deg)
+
+      &__menu
+        position: absolute
+        top: rem(2px)
+        right: 0.5rem
+        opacity: 0
+        transition: 0.2s
+
+        > *
+          transition: 0.3s
+          transform: rotate(90deg)
+
+        &__add
+          +icon-before($add)
+
+          &:hover
+            color: #5FD052
 
     &__content
       padding: 1rem 0

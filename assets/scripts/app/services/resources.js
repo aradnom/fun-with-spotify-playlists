@@ -121,17 +121,7 @@ App.service( 'resources', [ '$rootScope', 'spotifyConfig', 'spotifyApi', 'spotif
       // Track formatting
       if ( playlist.tracks && playlist.tracks.length ) {
         playlist.tracks.forEach( function ( track ) {
-          // Put together display-friendly track titles
-          var title   = track.track.name;
-          var artists = track.track.artists.map( function ( artist ) {
-            return artist.name;
-          });
-
-          track.track.artist_string  = artists.join( ', ' );
-          track.track.playlist_title = track.track.artist_string + ' - ' + title;
-
-          // Get reference thumbnail
-          track.track.thumbnail      = spotifyUtility.getTrackThumbnail( track.track, 300, true );
+          spotifyUtility.formatTrack( track );
         });
       }
     });

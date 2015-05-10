@@ -7,17 +7,35 @@
       <div class="search__results__content">
         <h4>Tracks</h4>
         <ul class="search__results__tracks">
-          <li ng-repeat="row in results.tracks.items.slice( 0, 10 )" ng-bind-html="row.name" repeat-done-event></li>
+          <li class="search__results__track" ng-repeat="row in results.tracks.items.slice( 0, 10 )" ng-dblclick="addToPlaylist( row )" repeat-done-event>
+            <span ng-bind-html="row.name"></span>
+
+            <ul class="search__results__track__menu">
+              <li class="search__results__track__menu__add" ng-click="addToPlaylist( row )"><span class="vh">Add to playlist</span></li>
+            </ul>
+          </li>
         </ul>
 
         <h4>Artists</h4>
         <ul class="search__results__artists">
-          <li ng-repeat="row in results.artists.items.slice( 0, 10 )" ng-bind-html="row.name" repeat-done-event></li>
+          <li ng-repeat="row in results.artists.items.slice( 0, 10 )" ng-bind-html="row.name" ng-dblclick="addToPlaylist( row )" repeat-done-event>
+            <span ng-bind-html="row.name"></span>
+
+            <ul class="search__results__track__menu">
+              <li class="search__results__track__menu__add" ng-click="addToPlaylist( row )"><span class="vh">Add to playlist</span></li>
+            </ul>
+          </li>
         </ul>
 
         <h4>Albums</h4>
         <ul class="search__results__albums">
-          <li ng-repeat="row in results.albums.items.slice( 0, 10 )" ng-bind-html="row.name" repeat-done-event></li>
+          <li ng-repeat="row in results.albums.items.slice( 0, 10 )" ng-bind-html="row.name" ng-dblclick="addToPlaylist( row )" repeat-done-event>
+            <span ng-bind-html="row.name"></span>
+
+            <ul class="search__results__track__menu">
+              <li class="search__results__track__menu__add" ng-click="addToPlaylist( row )"><span class="vh">Add to playlist</span></li>
+            </ul>
+          </li>
         </ul>
       </div>
     </div>
