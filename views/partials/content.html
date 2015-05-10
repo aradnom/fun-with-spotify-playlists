@@ -54,6 +54,12 @@
         <strong ng-bind-html="track.name"></strong>
         <span class="master-playlist__tracks__track__divider" ng-bind-html="' - '"></span>
         <span ng-bind-html="track.artist_string"></span>
+
+        <ul class="master-playlist__tracks__track__menu">
+          <li class="master-playlist__tracks__track__menu__delete" ng-click="removeTrack( $index )">
+            <span class="vh">Delete track</span>
+          </li>
+        </ul>
       </li>
     </ul>
   </section>

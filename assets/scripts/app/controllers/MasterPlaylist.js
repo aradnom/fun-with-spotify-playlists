@@ -23,6 +23,10 @@ App.controller( 'MasterPlaylist', [ '$scope', '$element', '$rootScope', 'localSt
     $rootScope.$broadcast( 'playTrack', track );
   };
 
+  $scope.removeTrack = function ( index ) {
+    removeFromPlaylist( index );
+  };
+
   $scope.dragDrop = function ( $event, ui ) {
     // Then deal with adding the new track at the correct position
     var $tracks = $element.find( '.master-playlist__tracks__track' );

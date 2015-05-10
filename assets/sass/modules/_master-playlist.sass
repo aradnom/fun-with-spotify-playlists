@@ -46,10 +46,17 @@
     &__track
       cursor: pointer
       position: relative
+      padding-right: 2rem
 
       &:hover
         &:after
           width: 100%
+
+        .master-playlist__tracks__track__menu
+          opacity: 1
+
+          > *
+            transform: rotate(0deg)
 
       &:after
         content: ''
@@ -67,3 +74,20 @@
       &__divider
         display: inline-block
         margin: 0 0.4rem
+
+      &__menu
+        position: absolute
+        top: 0.4rem
+        right: 0
+        transition: 0.2s
+        opacity: 0
+
+        > *
+          transition: 0.3s
+          transform: rotate(90deg)
+
+        &__delete
+          +icon-before($delete)
+
+          &:hover
+            color: rgb(224, 62, 62)
