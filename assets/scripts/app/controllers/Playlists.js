@@ -1,7 +1,7 @@
 /**
  * Playlists controller.
  */
-App.controller( 'Playlists', [ '$scope', '$rootScope', '$element', 'spotifyApi', 'resources', 'spotifyConfig', function ( $scope, $rootScope, $element, spotifyApi, resources, spotifyConfig ) {
+App.controller( 'Playlists', [ '$scope', '$rootScope', '$element', 'spotifyApi', 'resources', 'spotifyConfig', 'dragAndDrop', function ( $scope, $rootScope, $element, spotifyApi, resources, spotifyConfig, dragAndDrop ) {
 
   /////////////////////////////////////////////////////////////////////////////
   // Init /////////////////////////////////////////////////////////////////////
@@ -49,6 +49,10 @@ App.controller( 'Playlists', [ '$scope', '$rootScope', '$element', 'spotifyApi',
 
   $scope.dragStart = function ( $event, ui, track ) {
     $rootScope.$broadcast( 'dragStart', track );
+
+    // Update the track currently dragging in the drag and drop service so
+    // other controllers can see it
+    dragAndDrop.currentTrack = track.track;
   };
 
   $scope.dragStop = function ( $event, ui, track ) {
