@@ -1,7 +1,7 @@
 /**
  * Playlists controller.
  */
-App.controller( 'Playlists', [ '$scope', '$rootScope', '$element', 'spotifyApi', 'resources', 'spotifyConfig', 'dragAndDrop', function ( $scope, $rootScope, $element, spotifyApi, resources, spotifyConfig, dragAndDrop ) {
+App.controller( 'Playlists', [ '$scope', '$rootScope', '$element', 'spotifyApi', 'resources', 'spotifyConfig', 'dragAndDrop', 'spotifyUtility', function ( $scope, $rootScope, $element, spotifyApi, resources, spotifyConfig, dragAndDrop, spotifyUtility ) {
 
   /////////////////////////////////////////////////////////////////////////////
   // Init /////////////////////////////////////////////////////////////////////
@@ -42,9 +42,8 @@ App.controller( 'Playlists', [ '$scope', '$rootScope', '$element', 'spotifyApi',
     }
   };
 
-  $scope.playTrack = function ( track ) {
-    // Tell the player to play the track
-    $rootScope.$broadcast( 'playTrack', track );
+  $scope.addToPlaylist = function ( track ) {
+    $rootScope.$broadcast( 'addToMasterPlaylist', spotifyUtility.formatTrack( track ) );
   };
 
   $scope.dragStart = function ( $event, ui, track ) {

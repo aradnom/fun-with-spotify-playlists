@@ -122,16 +122,39 @@ App.controller( 'MasterPlaylist', [ '$scope', '$element', '$rootScope', 'localSt
   // On play track event, display track as the current track
   $scope.$on( 'playTrack', function ( $event, track ) {
     $scope.currentTrack = track;
+
+    // Deactivate any currently-active tracks
+    $scope.tracks
+      .filter( function ( track ) {
+        return track.active;
+      }).forEach( function ( track ) {
+        track.active = false;
+      });
+
+    // And activate this track
+    track.active = true;
   });
 
   // On player playing, set current item to active
   $scope.$on( 'playerPlaying', function () {
+    // Set current track status to active
+    $scope.currentTrack.active = true;
+
+    // Set master playlist status to active
     $scope.playing = true;
   });
 
   // On player stopped, set current item to inactive
   $scope.$on( 'playerStopped', function () {
     $scope.playing = false;
+
+    // Deactivate tracks in the playlist
+    $scope.tracks
+      .filter( function ( track ) {
+        return track.active;
+      }).forEach( function ( track ) {
+        track.active = false;
+      });
   });
 
   $scope.$on( 'addToMasterPlaylist', function ( $event, track ) {
