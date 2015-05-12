@@ -56,7 +56,8 @@ App.service( 'getTokens', [ '$http', '$q', function ( $http, $q ) {
 App.service( 'resources', [ '$rootScope', 'spotifyConfig', 'spotifyApi', 'spotifyUtility', 'CacheFactory', '$q', function ( $rootScope, spotifyConfig, spotifyApi, spotifyUtility, CacheFactory, $q ) {
   // Top-level object for all resource types
   $rootScope.resources = {
-    playlists: null
+    playlists: null,
+    library: null
   };
 
   // Create basic cache factory for Stuff
@@ -69,7 +70,7 @@ App.service( 'resources', [ '$rootScope', 'spotifyConfig', 'spotifyApi', 'spotif
 
   // Watch resources collection so we can fire event when everybody is ready
   $rootScope.$watchCollection( 'resources', function () {
-    if ( $rootScope.resources.playlists ) {
+    if ( $rootScope.resources.playlists && $rootScope.resources.library ) {
       $rootScope.$broadcast( 'resourcesReady' );
     }
   });
@@ -94,9 +95,12 @@ App.service( 'resources', [ '$rootScope', 'spotifyConfig', 'spotifyApi', 'spotif
    */
   function initResources () {
     $rootScope.resources.playlists = cache.get( 'playlists' );
+    $rootScope.resources.library   = cache.get( 'library' );
 
     // If data isn't set, refresh the cache
-    if ( ! $rootScope.resources.playlists ) { refreshCache(); }
+    if ( ! $rootScope.resources.playlists || ! $rootScope.resources.library ) {
+      refreshCache();
+    }
   }
 
   /**
@@ -123,13 +127,15 @@ App.service( 'resources', [ '$rootScope', 'spotifyConfig', 'spotifyApi', 'spotif
    */
   function buildResources () {
     buildPlaylists();
+    buildLibrary();
   }
 
   /**
    * Build playlist resources (playlists and tracks).
    */
   function buildPlaylists () {
-    spotifyApi.getPlaylists()
+    spotifyApi
+      .getPlaylists()
       .then( function ( playlists ) {
         if ( playlists && playlists.total ) {
           // Then for each playlist, pull tracks
@@ -158,6 +164,22 @@ App.service( 'resources', [ '$rootScope', 'spotifyConfig', 'spotifyApi', 'spotif
               });
           });
         }
+      });
+  }
+
+  function buildLibrary () {
+    spotifyApi
+      .getLibrary()
+      .then( function ( tracks ) {
+        // All done - format data, cache everything and set resources
+        tracks.forEach( function ( track ) {
+          spotifyUtility.formatTrack( track );
+        });
+
+        cache.put( 'library', tracks );
+
+        // And set resource
+        $rootScope.resources.library = tracks;
       });
   }
 
@@ -238,9 +260,57 @@ App.service( 'spotifyApi', [ 'Spotify', 'userConfig', 'localStorageService', '$c
   /////////////////////////////////////////////////////////////////////////////
 
 
+  service.getLibrary = function () {
+    var deferred = $q.defer();
+
+    if ( this.apiReady ) {
+      var allTracks = [];
+
+      Spotify
+        .getSavedUserTracks({ limit: 50 })
+        .then( function ( tracks ) {
+          if ( tracks.total ) {
+            // Throw tracks on the stack
+            allTracks = allTracks.concat( tracks.items );
+
+            if ( allTracks.length < tracks.total ) {
+              // Set up requests to get the rest of the tracks if necessary
+              var promises = [];
+
+              for ( var i = tracks.limit; i < tracks.total; i += tracks.limit ) {
+                promises.push( Spotify.getSavedUserTracks( { offset: i, limit: tracks.limit } ) );
+              }
+
+              $q.all( promises ).then( function ( remaining ) {
+                if ( remaining && remaining.length ) {
+                  allTracks = allTracks.concat.apply( allTracks, remaining.map( function ( item ) {
+                    return item.items;
+                  }));
+                }
+
+                // And back we go
+                deferred.resolve( allTracks );
+              });
+            } else {
+              // Guess we're done then, return directly
+              deferred.resolve( allTracks );
+            }
+          } else {
+            deferred.reject( 'User library contains no tracks.' );
+          }
+        })
+        .catch( function ( error ) {
+          deferred.reject( error );
+        });
+    } else {
+      console.error( 'Spotify API not loaded.' );
+    }
+
+    return deferred.promise;
+  };
+
   /**
    * Retrieve user's playlists.
-   * TODO: retrieve all playlists instead of just first page.
    *
    * @return {Object} Returns deferred object with results on success
    */
@@ -265,7 +335,8 @@ App.service( 'spotifyApi', [ 'Spotify', 'userConfig', 'localStorageService', '$c
     if ( this.apiReady ) {
       var allTracks = [];
 
-      Spotify.getPlaylistTracks( userConfig.username, playlistId )
+      Spotify
+        .getPlaylistTracks( userConfig.username, playlistId, { limit: 50 } )
         .then( function ( tracks ) {
           if ( tracks.total ) {
             // Throw tracks on the stack
@@ -276,7 +347,7 @@ App.service( 'spotifyApi', [ 'Spotify', 'userConfig', 'localStorageService', '$c
               var promises = [];
 
               for ( var i = tracks.limit; i < tracks.total; i += tracks.limit ) {
-                promises.push( Spotify.getPlaylistTracks( userConfig.username, playlistId, { offset: i } ) );
+                promises.push( Spotify.getPlaylistTracks( userConfig.username, playlistId, { offset: i, limit: tracks.limit } ) );
               }
 
               $q.all( promises ).then( function ( remaining ) {

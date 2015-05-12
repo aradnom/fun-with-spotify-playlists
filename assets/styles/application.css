@@ -139,7 +139,7 @@ input[type="text"]:focus { background: #444; }
 .master-playlist__tracks__track strong { font-size: 1.2rem; }
 .master-playlist__tracks__track__divider { display: inline-block; margin: 0 0.4rem; }
 .master-playlist__tracks__track__menu { position: absolute; top: 0.4rem; right: 0.5rem; transition: 0.2s; opacity: 0; }
-.master-playlist__tracks__track__menu > * { transition: 0.3s; -webkit-transform: rotate(90deg); -ms-transform: rotate(90deg); transform: rotate(90deg); }
+.master-playlist__tracks__track__menu > * { transition: 0.3s; -webkit-transform: rotate(90deg); -ms-transform: rotate(90deg); transform: rotate(90deg); cursor: pointer; }
 .master-playlist__tracks__track__menu__delete:before { font-family: "icons"; speak: none; font-style: normal; font-weight: normal; font-variant: normal; text-transform: none; line-height: 1; -webkit-font-smoothing: antialiased; content: ""; }
 .master-playlist__tracks__track__menu__delete:hover { color: #e03e3e; }
 

@@ -4,7 +4,8 @@
 App.service( 'resources', [ '$rootScope', 'spotifyConfig', 'spotifyApi', 'spotifyUtility', 'CacheFactory', '$q', function ( $rootScope, spotifyConfig, spotifyApi, spotifyUtility, CacheFactory, $q ) {
   // Top-level object for all resource types
   $rootScope.resources = {
-    playlists: null
+    playlists: null,
+    library: null
   };
 
   // Create basic cache factory for Stuff
@@ -17,7 +18,7 @@ App.service( 'resources', [ '$rootScope', 'spotifyConfig', 'spotifyApi', 'spotif
 
   // Watch resources collection so we can fire event when everybody is ready
   $rootScope.$watchCollection( 'resources', function () {
-    if ( $rootScope.resources.playlists ) {
+    if ( $rootScope.resources.playlists && $rootScope.resources.library ) {
       $rootScope.$broadcast( 'resourcesReady' );
     }
   });
@@ -42,9 +43,12 @@ App.service( 'resources', [ '$rootScope', 'spotifyConfig', 'spotifyApi', 'spotif
    */
   function initResources () {
     $rootScope.resources.playlists = cache.get( 'playlists' );
+    $rootScope.resources.library   = cache.get( 'library' );
 
     // If data isn't set, refresh the cache
-    if ( ! $rootScope.resources.playlists ) { refreshCache(); }
+    if ( ! $rootScope.resources.playlists || ! $rootScope.resources.library ) {
+      refreshCache();
+    }
   }
 
   /**
@@ -71,13 +75,15 @@ App.service( 'resources', [ '$rootScope', 'spotifyConfig', 'spotifyApi', 'spotif
    */
   function buildResources () {
     buildPlaylists();
+    buildLibrary();
   }
 
   /**
    * Build playlist resources (playlists and tracks).
    */
   function buildPlaylists () {
-    spotifyApi.getPlaylists()
+    spotifyApi
+      .getPlaylists()
       .then( function ( playlists ) {
         if ( playlists && playlists.total ) {
           // Then for each playlist, pull tracks
@@ -106,6 +112,22 @@ App.service( 'resources', [ '$rootScope', 'spotifyConfig', 'spotifyApi', 'spotif
               });
           });
         }
+      });
+  }
+
+  function buildLibrary () {
+    spotifyApi
+      .getLibrary()
+      .then( function ( tracks ) {
+        // All done - format data, cache everything and set resources
+        tracks.forEach( function ( track ) {
+          spotifyUtility.formatTrack( track );
+        });
+
+        cache.put( 'library', tracks );
+
+        // And set resource
+        $rootScope.resources.library = tracks;
       });
   }
 
