@@ -180,6 +180,13 @@ App.controller( 'Player', [ '$scope', '$rootScope', '$element', 'spotifyHelper',
         if ( ( progress / duration ) > 0.3 ) {
           $scope.reverseRemaining = true;
         }
+
+        if ( ( progress + 1 ) > duration ) {
+          // We've hit the end of the track
+          $rootScope.$broadcast( 'trackEnded' );
+
+          stopPlayback();
+        }
       }
     }, 1000 );
   }

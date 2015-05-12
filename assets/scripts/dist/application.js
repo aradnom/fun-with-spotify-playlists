@@ -918,6 +918,15 @@ App.controller( 'MasterPlaylist', [ '$scope', '$element', '$rootScope', 'localSt
   // Events ///////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////
 
+  // On track ended event, attempt to play the next track
+  $scope.$on( 'trackEnded', function () {
+    var trackIndex = $scope.tracks.indexOf( $scope.currentTrack );
+
+    if ( trackIndex > -1 && $scope.tracks[ trackIndex + 1 ] ) {
+      $rootScope.$broadcast( 'playTrack', $scope.tracks[ trackIndex + 1 ] );
+    }
+  });
+
   // On play track event, display track as the current track
   $scope.$on( 'playTrack', function ( $event, track ) {
     $scope.currentTrack = track;
@@ -963,6 +972,8 @@ App.controller( 'MasterPlaylist', [ '$scope', '$element', '$rootScope', 'localSt
   /////////////////////////////////////////////////////////////////////////////
   // Internal functions ///////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////
+
+
 
   /**
    * Add to the master playlist and update the track cache appropriately
@@ -1177,6 +1188,13 @@ App.controller( 'Player', [ '$scope', '$rootScope', '$element', 'spotifyHelper',
         // If we're a bit into playback, reverse display of Remaining timers
         if ( ( progress / duration ) > 0.3 ) {
           $scope.reverseRemaining = true;
+        }
+
+        if ( ( progress + 1 ) > duration ) {
+          // We've hit the end of the track
+          $rootScope.$broadcast( 'trackEnded' );
+
+          stopPlayback();
         }
       }
     }, 1000 );
