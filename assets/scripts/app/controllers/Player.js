@@ -49,7 +49,7 @@ App.controller( 'Player', [ '$scope', '$rootScope', '$element', 'spotifyHelper',
           setPlayerStatusStopped();
         } else {
           // Deal with player errors
-          console.log( response );
+          console.error( response );
         }
       });
   }
@@ -70,7 +70,14 @@ App.controller( 'Player', [ '$scope', '$rootScope', '$element', 'spotifyHelper',
           currentTrack = track;
         } else {
           // Deal with player errors
-          console.log( response );
+          // If API returns a specific error (4303), track is unplayable
+          // (usually because it doesn't exist or got moved), so mark it as such
+          // to avoid this is in the future
+          if ( response.error && response.error.type && response.error.type === '4303' ) {
+            $rootScope.$broadcast( 'unplayableTrack', track );
+          }
+
+          console.error( response );
         }
       });
   }

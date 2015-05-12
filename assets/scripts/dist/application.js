@@ -818,8 +818,10 @@ App.controller( 'MasterPlaylist', [ '$scope', '$element', '$rootScope', 'localSt
   /////////////////////////////////////////////////////////////////////////////
 
   $scope.playTrack = function ( track ) {
-    // Tell the player to play the track
-    $rootScope.$broadcast( 'playTrack', track );
+    // Tell the player to play the track (but only if track is playable)
+    if ( ! track.unplayable ) {
+      $rootScope.$broadcast( 'playTrack', track );
+    }
   };
 
   $scope.removeTrack = function ( index ) {
@@ -920,10 +922,17 @@ App.controller( 'MasterPlaylist', [ '$scope', '$element', '$rootScope', 'localSt
 
   // On track ended event, attempt to play the next track
   $scope.$on( 'trackEnded', function () {
-    var trackIndex = $scope.tracks.indexOf( $scope.currentTrack );
+    // Cut tracks down to the playable set just in case
+    var playable = $scope.tracks.filter( function ( track ) {
+      return ! track.unplayable;
+    });
 
-    if ( trackIndex > -1 && $scope.tracks[ trackIndex + 1 ] ) {
-      $rootScope.$broadcast( 'playTrack', $scope.tracks[ trackIndex + 1 ] );
+    if ( playable.length ) {
+      var trackIndex = playable.indexOf( $scope.currentTrack );
+
+      if ( trackIndex > -1 && playable[ trackIndex + 1 ] ) {
+        $rootScope.$broadcast( 'playTrack', playable[ trackIndex + 1 ] );
+      }
     }
   });
 
@@ -969,11 +978,18 @@ App.controller( 'MasterPlaylist', [ '$scope', '$element', '$rootScope', 'localSt
     addToPlaylist( track, 0 );
   });
 
+  // Deal with unplayable tracks.  These are discovered at play time (there's
+  // no way to detect these in the API results).
+  $scope.$on( 'unplayableTrack', function ( $event, track ) {
+    track.unplayable = true;
+
+    // Update the track cache so we know ahead of time next time
+    localStorageService.set( 'playerMasterPlaylist', $scope.tracks );
+  });
+
   /////////////////////////////////////////////////////////////////////////////
   // Internal functions ///////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////
-
-
 
   /**
    * Add to the master playlist and update the track cache appropriately
@@ -1058,7 +1074,7 @@ App.controller( 'Player', [ '$scope', '$rootScope', '$element', 'spotifyHelper',
           setPlayerStatusStopped();
         } else {
           // Deal with player errors
-          console.log( response );
+          console.error( response );
         }
       });
   }
@@ -1079,7 +1095,14 @@ App.controller( 'Player', [ '$scope', '$rootScope', '$element', 'spotifyHelper',
           currentTrack = track;
         } else {
           // Deal with player errors
-          console.log( response );
+          // If API returns a specific error (4303), track is unplayable
+          // (usually because it doesn't exist or got moved), so mark it as such
+          // to avoid this is in the future
+          if ( response.error && response.error.type && response.error.type === '4303' ) {
+            $rootScope.$broadcast( 'unplayableTrack', track );
+          }
+
+          console.error( response );
         }
       });
   }

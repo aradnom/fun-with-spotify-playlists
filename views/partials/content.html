@@ -69,7 +69,7 @@
     </div>
 
     <ul class="master-playlist__tracks" data-drop="true" ng-class="{ '--active': active, '--hover': hover }" jqyoui-droppable="{ onDrop: 'dragDrop', onOver: 'dragOver', onOut: 'dragOut' }">
-      <li class="master-playlist__tracks__track" ng-class="{ '--active': track.active }" ng-repeat="track in tracks track by $index" ng-dblclick="playTrack( track )" data-drag="true" jqyoui-draggable="{ animate: true, onStart: 'dragStart( track, $index )', onStop: 'dragStop( track )' }" data-jqyoui-options="{ appendTo: 'body', helper: 'clone' }">
+      <li class="master-playlist__tracks__track" ng-class="{ '--active': track.active, '--disabled': track.unplayable }" ng-repeat="track in tracks track by $index" ng-dblclick="playTrack( track )" data-drag="true" jqyoui-draggable="{ animate: true, onStart: 'dragStart( track, $index )', onStop: 'dragStop( track )' }" data-jqyoui-options="{ appendTo: 'body', helper: 'clone' }">
         <strong ng-bind-html="track.name"></strong>
         <span class="master-playlist__tracks__track__divider" ng-bind-html="' - '"></span>
         <span ng-bind-html="track.artist_string"></span>
