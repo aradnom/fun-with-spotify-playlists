@@ -1,8 +1,13 @@
 <article class="player-main">
 
-  <section class="content  --center  --fixed  search" ng-controller="Search" ng-class="{ '--focus': focus }">
+  <div class="top-bar"></div>
+
+  <section class="search" ng-controller="Search" ng-class="{ '--focus': focus }">
+
     <input type="text" class="search__query" placeholder="Search..." ng-model="search.query" ng-keyup="runSearch()" ng-focus="focus = true" ng-blur="focus = false" />
+
     <button class="search__close" ng-click="closeSearch()"><span class="vh">Close search</span></button>
+
     <div class="search__results">
       <div class="search__results__content">
         <h4>Tracks</h4>
@@ -39,9 +44,11 @@
         </ul>
       </div>
     </div>
+
   </section>
 
-  <section class="content  --center  player" ng-controller="Player" ng-class="{ '--playing': playing }">
+  <section class="player" ng-controller="Player" ng-class="{ '--playing': playing }">
+
     <button class="player__play-pause" ng-click="playPause()" ng-class="{ '--stop': playing }"><span class="vh">Play/Pause</button>
     <button class="player__prev" ng-click="previousTrack()"><span class="vh">Previous</button>
 
@@ -55,10 +62,10 @@
     </div>
 
     <button class="player__next" ng-click="nextTrack()"><span class="vh">Next</button>
+
   </section>
 
   <section class="content  --center  master-playlist" ng-controller="MasterPlaylist" ng-class="{ '--full-width': fullWidth }">
-    <div class="master-playlist__previous"></div>
 
     <div class="master-playlist__current-track" ng-show="currentTrack" ng-class="{ '--active': playing }">
       <img ng-src="{{currentTrack.thumbnail}}" border="0" />
@@ -81,12 +88,15 @@
         </ul>
       </li>
     </ul>
+
   </section>
 
   <aside class="sidebar" ng-controller="Sidebar" ng-class="{ '--closed': closed }" side="left">
+
     <div class="sidebar__close">
       <button class="sidebar__close__trigger" ng-click="toggleSidebar()"><span class="vh">Close sidebar</span></button>
     </div>
+
     <div class="sidebar__content">
       <div class="sidebar__playlists" ng-controller="Playlists">
         <ul>
@@ -106,15 +116,19 @@
         </ul>
       </div>
     </div>
+
   </aside>
 
   <aside class="sidebar  --right" ng-controller="Sidebar" ng-class="{ '--closed': closed }" side="right">
+
     <div class="sidebar__close">
       <button class="sidebar__close__trigger" ng-click="toggleSidebar()"><span class="vh">Close sidebar</span></button>
     </div>
+
     <div class="sidebar__content">
       <p>Some'n sure gonna happen in here eventually.</p>
     </div>
+
   </aside>
 
 </article>

@@ -47,14 +47,16 @@ button { outline: none; }
 .content.\--center { width: 30rem; margin-left: auto; margin-right: auto; }
 .content.\--fixed { left: 50%; margin-left: -15rem; }
 
+.top-bar { position: fixed; top: 0; left: 0; width: 100%; height: 3rem; background: #333; z-index: 10; }
+
 .player-main { padding-top: 3rem; }
 
-.sidebar { position: fixed; top: 0; left: 0; height: 100%; width: 18rem; background: #333; transition: 0.2s ease-out; }
+.sidebar { position: fixed; top: 0; left: 0; height: 100%; width: 18rem; background: #333; transition: 0.2s ease-out; padding-top: 4rem; }
 .sidebar.\--closed { left: -18rem; }
 .sidebar.\--right { left: auto; right: 0; }
 .sidebar.\--right.\--closed { right: -18rem; }
 .sidebar__content { overflow-y: auto; height: 100%; }
-.sidebar__close { position: absolute; top: 0; right: -3rem; width: 3rem; height: 100%; }
+.sidebar__close { position: absolute; top: 4rem; right: -3rem; width: 3rem; height: 100%; }
 .sidebar.\--right .sidebar__close { right: auto; left: -3rem; }
 .sidebar__close:hover .sidebar__close__trigger, .sidebar:hover .sidebar__close .sidebar__close__trigger { opacity: 1; cursor: pointer; }
 .sidebar__close__trigger { background: none; color: #444; border: none; font-size: 2rem; width: 3rem; height: 3rem; transition: 0.2s; -webkit-transform: rotateY(180deg); transform: rotateY(180deg); opacity: 0; }
@@ -79,13 +81,13 @@ button { outline: none; }
 .playlist__tracks__track.ui-draggable-dragging p { border: none; }
 .playlist__tracks__track p { border-top: 1px solid #333; padding: 0.2rem 0; transition: 0.2s; }
 
-.search { position: fixed; top: 0; z-index: 50; }
-.search__query { margin: 0 auto; display: block; width: 100%; }
+.search { position: fixed; top: 0; z-index: 50; right: 0; }
+.search__query { margin: 0 auto; display: block; width: 20rem; }
 .search__query::-webkit-input-placeholder { color: #666; }
 .search__query::-moz-placeholder { color: #666; }
 .search__query:-ms-input-placeholder { color: #666; }
 .search__query::placeholder { color: #666; }
-.search__query:focus { padding-top: 0.8rem; padding-bottom: 0.8rem; }
+.search__query:focus { width: 25rem; padding-top: 0.8rem; padding-bottom: 0.8rem; }
 .search__query:focus::-webkit-input-placeholder { color: #222; }
 .search__query:focus::-moz-placeholder { color: #222; }
 .search__query:focus:-ms-input-placeholder { color: #222; }
@@ -106,7 +108,7 @@ button { outline: none; }
 .search__results__track__menu__add:hover { color: #5FD052; }
 .search__results__content { padding: 1rem 0; }
 
-.player { text-align: center; margin-top: 1rem; opacity: 0.5; transition: 0.2s; }
+.player { width: 30rem; position: fixed; top: 0.5rem; left: 50%; margin-left: -15rem; text-align: center; opacity: 0.5; transition: 0.2s; z-index: 25; }
 .player.\--playing { opacity: 1; }
 .player.\--playing button { width: 3rem; height: 3rem; }
 .player > * { display: inline-block; vertical-align: top; }
