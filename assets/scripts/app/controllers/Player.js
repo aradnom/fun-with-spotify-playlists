@@ -35,6 +35,14 @@ App.controller( 'Player', [ '$scope', '$rootScope', '$element', 'spotifyHelper',
     }
   };
 
+  $scope.nextTrack = function () {
+    $rootScope.$broadcast( 'nextTrack' );
+  };
+
+  $scope.previousTrack = function () {
+    $rootScope.$broadcast( 'previousTrack' );
+  };
+
   /////////////////////////////////////////////////////////////////////////////
   // Internal functions ///////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////

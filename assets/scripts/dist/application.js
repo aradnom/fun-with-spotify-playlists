@@ -993,18 +993,7 @@ App.controller( 'MasterPlaylist', [ '$scope', '$element', '$rootScope', 'localSt
 
   // On track ended event, attempt to play the next track
   $scope.$on( 'trackEnded', function () {
-    // Cut tracks down to the playable set just in case
-    var playable = $scope.tracks.filter( function ( track ) {
-      return ! track.unplayable;
-    });
-
-    if ( playable.length ) {
-      var trackIndex = playable.indexOf( $scope.currentTrack );
-
-      if ( trackIndex > -1 && playable[ trackIndex + 1 ] ) {
-        $rootScope.$broadcast( 'playTrack', playable[ trackIndex + 1 ] );
-      }
-    }
+    playNextTrack();
   });
 
   // On play track event, display track as the current track
@@ -1021,6 +1010,16 @@ App.controller( 'MasterPlaylist', [ '$scope', '$element', '$rootScope', 'localSt
 
     // And activate this track
     track.active = true;
+  });
+
+  // Play next track if available
+  $scope.$on( 'nextTrack', function () {
+    playNextTrack();
+  });
+
+  // Play previous track if available
+  $scope.$on( 'previousTrack', function () {
+    playPreviousTrack();
   });
 
   // On player playing, set current item to active
@@ -1092,6 +1091,42 @@ App.controller( 'MasterPlaylist', [ '$scope', '$element', '$rootScope', 'localSt
     // Update the cache
     localStorageService.set( 'playerMasterPlaylist', $scope.tracks );
   }
+
+  /**
+   * Attempt to play the next track in the master playlist.
+   */
+  function playNextTrack () {
+    // Cut tracks down to the playable set just in case
+    var playable = $scope.tracks.filter( function ( track ) {
+      return ! track.unplayable;
+    });
+
+    if ( playable.length ) {
+      var trackIndex = playable.indexOf( $scope.currentTrack );
+
+      if ( trackIndex > -1 && playable[ trackIndex + 1 ] ) {
+        $rootScope.$broadcast( 'playTrack', playable[ trackIndex + 1 ] );
+      }
+    }
+  }
+
+  /**
+   * Attempt to play the previous track in the master playlist.
+   */
+  function playPreviousTrack () {
+    // Cut tracks down to the playable set just in case
+    var playable = $scope.tracks.filter( function ( track ) {
+      return ! track.unplayable;
+    });
+
+    if ( playable.length ) {
+      var trackIndex = playable.indexOf( $scope.currentTrack );
+
+      if ( trackIndex > -1 && playable[ trackIndex - 1 ] ) {
+        $rootScope.$broadcast( 'playTrack', playable[ trackIndex - 1 ] );
+      }
+    }
+  }
 }]);
 
 /**
@@ -1129,6 +1164,14 @@ App.controller( 'Player', [ '$scope', '$rootScope', '$element', 'spotifyHelper',
         playTrack( currentTrack );
       }
     }
+  };
+
+  $scope.nextTrack = function () {
+    $rootScope.$broadcast( 'nextTrack' );
+  };
+
+  $scope.previousTrack = function () {
+    $rootScope.$broadcast( 'previousTrack' );
   };
 
   /////////////////////////////////////////////////////////////////////////////

@@ -48,6 +48,8 @@
       position: relative
       padding-right: 2rem
       transition: 0.2s
+      display: table
+      width: 100%
 
       &:hover
         &:after
@@ -61,13 +63,24 @@
 
       &.ui-draggable-dragging
         transition: none
+        display: block
+        width: auto
+        padding: 0
+
+        .master-playlist__tracks__track__name
+          width: auto
+
+        .master-playlist__tracks__track__artist
+          display: none
 
       &.\--active
         font-size: 1.2rem
         border: 1px solid #444
-        margin-left: -1rem
-        margin-right: -1rem
         padding: 0.2rem 1rem
+        width: 110%
+        left: -5%
+        background: rgba(255,255,255,0.05)
+        margin: 1rem 0
 
         strong
           font-size: 1.4rem
@@ -89,9 +102,20 @@
       strong
         font-size: 1.2rem
 
+      &__name, &__artist
+        display: table-cell
+        padding: 0 0.5rem
+
+      &__name
+        width: 66%
+
+      &__artist
+        width: 33%
+
       &__divider
-        display: inline-block
-        margin: 0 0.4rem
+        display: none
+        // display: inline-block
+        // margin: 0 0.4rem
 
       &__menu
         position: absolute
