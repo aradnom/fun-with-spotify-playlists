@@ -187,6 +187,14 @@ App.controller( 'MasterPlaylist', [ '$scope', '$element', '$rootScope', 'localSt
     localStorageService.set( 'playerMasterPlaylist', $scope.tracks );
   });
 
+  // On the sidebars closing, check if they're both closed, and if so, expand
+  // the playlist to full width
+  $scope.$on( 'sidebarToggle', function ( $event, closed, side ) {
+    var status = $rootScope.sidebarStatus;
+
+    $scope.fullWidth = status.left && status.right;
+  });
+
   /////////////////////////////////////////////////////////////////////////////
   // Internal functions ///////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////

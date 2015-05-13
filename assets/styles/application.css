@@ -49,7 +49,7 @@ button { outline: none; }
 
 .player-main { padding-top: 3rem; }
 
-.sidebar { position: fixed; top: 0; left: 0; height: 100%; width: 18rem; background: #333; transition: 0.3s ease-out; }
+.sidebar { position: fixed; top: 0; left: 0; height: 100%; width: 18rem; background: #333; transition: 0.2s ease-out; }
 .sidebar.\--closed { left: -18rem; }
 .sidebar.\--right { left: auto; right: 0; }
 .sidebar.\--right.\--closed { right: -18rem; }
@@ -133,7 +133,8 @@ button { outline: none; }
 .dropzone.\--active { background-color: #323232; height: 4rem; top: 0; }
 .dropzone.\--hover { background-color: #3c3c3c; }
 
-.master-playlist { margin-top: 1.8rem; }
+.master-playlist { margin-top: 1.8rem; transition: 0.2s; }
+.master-playlist.\--full-width { width: 80%; }
 .master-playlist__current-track { background: #333; opacity: 0.5; transition: 0.2s; }
 .master-playlist__current-track.\--active { opacity: 1; }
 .master-playlist__current-track.\--active img { -webkit-filter: saturate(100%); filter: saturate(100%); }

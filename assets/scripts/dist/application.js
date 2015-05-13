@@ -1057,6 +1057,14 @@ App.controller( 'MasterPlaylist', [ '$scope', '$element', '$rootScope', 'localSt
     localStorageService.set( 'playerMasterPlaylist', $scope.tracks );
   });
 
+  // On the sidebars closing, check if they're both closed, and if so, expand
+  // the playlist to full width
+  $scope.$on( 'sidebarToggle', function ( $event, closed, side ) {
+    var status = $rootScope.sidebarStatus;
+
+    $scope.fullWidth = status.left && status.right;
+  });
+
   /////////////////////////////////////////////////////////////////////////////
   // Internal functions ///////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////
@@ -1509,9 +1517,20 @@ App.controller( 'Search', [ '$scope', '$rootScope', '$element', 'spotifyApi', 'd
 /**
  * Sidebar controller.
  */
-App.controller( 'Sidebar', [ '$scope', '$element', function ( $scope, $element ) {
+App.controller( 'Sidebar', [ '$scope', '$rootScope', '$element', '$attrs', function ( $scope, $rootScope, $element, $attrs ) {
+  // Keep track of the sidebar status in the root scope
+  if ( typeof( $rootScope.sidebarStatus ) === 'undefined' ) {
+    $rootScope.sidebarStatus = {};
+  }
+
   $scope.toggleSidebar = function () {
     $scope.closed = ! $scope.closed;
+
+    // Update the sidebar status in the root scope
+    $rootScope.sidebarStatus[ $attrs.side ] = $scope.closed;
+
+    // Tell everyone the sidebar was toggled
+    $rootScope.$broadcast( 'sidebarToggle' );
   };
 }]);
 
