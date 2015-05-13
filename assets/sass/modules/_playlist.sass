@@ -2,17 +2,19 @@
   border-bottom: 1px solid #252525
 
   &.\--active
-    background: #252525
+    background: #444
+
+    .playlist__tracks__track
+      background: #252525
 
   &__title
     @extend %clearfix
-    margin: 0.5rem 0
     cursor: pointer
     position: relative
     display: table
     line-height: 1rem
     width: 100%
-    padding: 0.3rem 1rem 0.3rem 0.5rem
+    padding: 0.5rem 1rem 0.5rem 0.5rem
     transition: 0.2s
     font-size: 1rem
 

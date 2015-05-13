@@ -3,10 +3,57 @@
   top: 0
   left: 0
   height: 100%
-  overflow-y: auto
   width: 18rem
   background: #333
+  transition: 0.3s ease-out
+
+  &.\--closed
+    left: -18rem
 
   &.\--right
     left: auto
     right: 0
+
+    &.\--closed
+      right: -18rem
+
+  &__content
+    overflow-y: auto
+    height: 100%
+
+  &__close
+    position: absolute
+    top: 0
+    right: -3rem
+    width: 3rem
+    height: 100%
+
+    .sidebar.\--right &
+      right: auto
+      left: -3rem
+
+    &:hover, .sidebar:hover &
+      .sidebar__close__trigger
+        opacity: 1
+        cursor: pointer
+
+    &__trigger
+      +icon-before($arrow)
+      background: none
+      color: #444
+      border: none
+      font-size: 2rem
+      width: 3rem
+      height: 3rem
+      transition: 0.2s
+      transform: rotateY(180deg)
+      opacity: 0
+
+      .sidebar.\--closed &
+        transform: rotateY(0deg)
+
+      .sidebar.\--right &
+        transform: rotateY(0deg)
+
+      .sidebar.\--right.\--closed &
+        transform: rotateY(180deg)

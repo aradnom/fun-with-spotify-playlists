@@ -1328,7 +1328,7 @@ App.controller( 'Playlists', [ '$scope', '$rootScope', '$element', 'spotifyApi',
     var $tracks = $parent.find( '.playlist__tracks' );
 
     if ( playlist.activeTracks ) {
-      $tracks.velocity( 'slideUp', { duration: playlist.tracks.length * 50, easing: 'easeOutExpo', complete: function () {
+      $tracks.velocity( 'slideUp', { duration: Math.log( playlist.tracks.length ) * 0.5 * 1000, easing: 'easeOutExpo', complete: function () {
         playlist.activeTracks = null;
 
         $scope.safeApply();
@@ -1339,7 +1339,7 @@ App.controller( 'Playlists', [ '$scope', '$rootScope', '$element', 'spotifyApi',
       $scope.safeApply();
 
       var unsubscribe = $scope.$on( 'ngRepeatFinished', function () {
-        $tracks.velocity( 'slideDown', { duration: playlist.tracks.length * 50, easing: 'easeOutExpo' });
+        $tracks.velocity( 'slideDown', { duration: Math.log( playlist.tracks.length ) * 0.5 * 1000, easing: 'easeOutExpo' });
 
         unsubscribe();
       });
@@ -1466,8 +1466,10 @@ App.controller( 'Search', [ '$scope', '$rootScope', '$element', 'spotifyApi', 'd
 /**
  * Sidebar controller.
  */
-App.controller( 'TrackSidebar', [ '$scope', '$element', 'Spotify', function ( $scope, $element, Spotify ) {
-
+App.controller( 'Sidebar', [ '$scope', '$element', function ( $scope, $element ) {
+  $scope.toggleSidebar = function () {
+    $scope.closed = ! $scope.closed;
+  };
 }]);
 
 'use strict';

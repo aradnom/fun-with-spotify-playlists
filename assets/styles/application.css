@@ -47,12 +47,24 @@ input[type="text"]:focus { background: #444; }
 
 .player-main { padding-top: 3rem; }
 
-.sidebar { position: fixed; top: 0; left: 0; height: 100%; overflow-y: auto; width: 18rem; background: #333; }
+.sidebar { position: fixed; top: 0; left: 0; height: 100%; width: 18rem; background: #333; transition: 0.3s ease-out; }
+.sidebar.\--closed { left: -18rem; }
 .sidebar.\--right { left: auto; right: 0; }
+.sidebar.\--right.\--closed { right: -18rem; }
+.sidebar__content { overflow-y: auto; height: 100%; }
+.sidebar__close { position: absolute; top: 0; right: -3rem; width: 3rem; height: 100%; }
+.sidebar.\--right .sidebar__close { right: auto; left: -3rem; }
+.sidebar__close:hover .sidebar__close__trigger, .sidebar:hover .sidebar__close .sidebar__close__trigger { opacity: 1; cursor: pointer; }
+.sidebar__close__trigger { background: none; color: #444; border: none; font-size: 2rem; width: 3rem; height: 3rem; transition: 0.2s; -webkit-transform: rotateY(180deg); transform: rotateY(180deg); opacity: 0; }
+.sidebar__close__trigger:before { font-family: "icons"; speak: none; font-style: normal; font-weight: normal; font-variant: normal; text-transform: none; line-height: 1; -webkit-font-smoothing: antialiased; content: ""; }
+.sidebar.\--closed .sidebar__close__trigger { -webkit-transform: rotateY(0deg); transform: rotateY(0deg); }
+.sidebar.\--right .sidebar__close__trigger { -webkit-transform: rotateY(0deg); transform: rotateY(0deg); }
+.sidebar.\--right.\--closed .sidebar__close__trigger { -webkit-transform: rotateY(180deg); transform: rotateY(180deg); }
 
 .playlist { border-bottom: 1px solid #252525; }
-.playlist.\--active { background: #252525; }
-.playlist__title { margin: 0.5rem 0; cursor: pointer; position: relative; display: table; line-height: 1rem; width: 100%; padding: 0.3rem 1rem 0.3rem 0.5rem; transition: 0.2s; font-size: 1rem; }
+.playlist.\--active { background: #444; }
+.playlist.\--active .playlist__tracks__track { background: #252525; }
+.playlist__title { cursor: pointer; position: relative; display: table; line-height: 1rem; width: 100%; padding: 0.5rem 1rem 0.5rem 0.5rem; transition: 0.2s; font-size: 1rem; }
 .playlist__title:hover { background: #444; }
 .\--disabled .playlist__title { opacity: 0.3; cursor: default; }
 .playlist__title__image { float: left; display: table-cell; }
@@ -88,7 +100,7 @@ input[type="text"]:focus { background: #444; }
 .search__results__track:hover .search__results__track__menu > * { -webkit-transform: rotate(0deg); -ms-transform: rotate(0deg); transform: rotate(0deg); }
 .search__results__track__menu { position: absolute; top: 0.125rem; right: 0.5rem; opacity: 0; transition: 0.2s; }
 .search__results__track__menu > * { transition: 0.3s; -webkit-transform: rotate(90deg); -ms-transform: rotate(90deg); transform: rotate(90deg); }
-.search__results__track__menu__add:before { font-family: "icons"; speak: none; font-style: normal; font-weight: normal; font-variant: normal; text-transform: none; line-height: 1; -webkit-font-smoothing: antialiased; content: ""; }
+.search__results__track__menu__add:before { font-family: "icons"; speak: none; font-style: normal; font-weight: normal; font-variant: normal; text-transform: none; line-height: 1; -webkit-font-smoothing: antialiased; content: ""; }
 .search__results__track__menu__add:hover { color: #5FD052; }
 .search__results__content { padding: 1rem 0; }
 
@@ -132,6 +144,7 @@ input[type="text"]:focus { background: #444; }
 .master-playlist__tracks__track:hover:after { width: 100%; }
 .master-playlist__tracks__track:hover .master-playlist__tracks__track__menu { opacity: 1; }
 .master-playlist__tracks__track:hover .master-playlist__tracks__track__menu > * { -webkit-transform: rotate(0deg); -ms-transform: rotate(0deg); transform: rotate(0deg); }
+.master-playlist__tracks__track.ui-draggable-dragging { transition: none; }
 .master-playlist__tracks__track.\--active { font-size: 1.2rem; border: 1px solid #444; margin-left: -1rem; margin-right: -1rem; padding: 0.2rem 1rem; }
 .master-playlist__tracks__track.\--active strong { font-size: 1.4rem; }
 .master-playlist__tracks__track.\--disabled { opacity: 0.5; cursor: default; }
