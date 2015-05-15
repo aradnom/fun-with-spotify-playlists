@@ -21,6 +21,14 @@ App.controller( 'Player', [ '$scope', '$rootScope', '$element', 'spotifyHelper',
     playTrack( track );
   });
 
+  // On the sidebars closing, move player a bit to take advantage of the extra
+  // space
+  $scope.$on( 'sidebarToggle', function ( $event, closed, side ) {
+    var status = $rootScope.sidebarStatus;
+
+    $scope.fullWidth = status.left && status.right;
+  });
+
   /////////////////////////////////////////////////////////////////////////////
   // Scope functions //////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////

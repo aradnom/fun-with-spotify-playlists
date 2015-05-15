@@ -3,18 +3,23 @@
   top: 0
   z-index: 50
   right: 0
+  transition: 0.2s
+  width: 20rem
+
+  &.\--focus
+    top: 0.5rem
+    right: 0.5rem
+    width: 25rem
 
   &__query
     margin: 0 auto
     display: block
-    width: 20rem
+    width: 100%
 
     &::placeholder
       color: #666
 
     &:focus
-      width: 25rem
-
       padding:
         top: 0.8rem
         bottom: 0.8rem
