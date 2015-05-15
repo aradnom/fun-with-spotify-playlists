@@ -48,27 +48,46 @@
   </section>
 
   <section class="player" ng-controller="Player" ng-class="{ '--playing': playing }">
+    <div class="player__controls">
+      <button class="player__controls__prev" ng-click="previousTrack()"><span class="vh">Previous</button>
 
-    <button class="player__play-pause" ng-click="playPause()" ng-class="{ '--stop': playing }"><span class="vh">Play/Pause</button>
-    <button class="player__prev" ng-click="previousTrack()"><span class="vh">Previous</button>
+      <button class="player__controls__play-pause" ng-click="playPause()" ng-class="{ '--stop': playing }">
+        <span class="vh">Play/Pause</span>
+        <div class="player__controls__image">
+          <img class="player__controls__image__outer" border="0" ng-show="currentTrack.thumbnail" ng-src="{{currentTrack.thumbnail}}" />
+          <img class="player__controls__image__inner" border="0" ng-show="currentTrack.thumbnail" ng-src="{{currentTrack.thumbnail}}" />
+        </div>
+      </button>
 
-    <div class="player__progress">
-      <p class="player__duration__current__lower" ng-bind-html="currentTime"></p>
-      <p class="player__duration__remaining__lower" ng-bind-html="timeRemaining" ng-class="{ '--off': reverseRemaining }"></p>
-      <div class="player__progress__inner" ng-style="progressStyles">
-        <p class="player__duration__current__upper" ng-bind-html="currentTime"></p>
-        <p class="player__duration__remaining__upper" ng-bind-html="timeRemaining" ng-class="{ '--on': reverseRemaining }"></p>
+      <div class="player__progress">
+        <p class="player__duration__current__lower" ng-bind-html="currentTime"></p>
+        <p class="player__duration__remaining__lower" ng-bind-html="timeRemaining" ng-class="{ '--off': reverseRemaining }"></p>
+        <div class="player__track-info__lower">
+          <p class="player__track-info__title" ng-bind-html="currentTrack.name"></p>
+          <p class="player__track-info__artist" ng-bind-html="currentTrack.artist_string"></p>
+        </div>
+
+        <div class="player__progress__inner" ng-style="progressStyles">
+          <p class="player__duration__current__upper" ng-bind-html="currentTime"></p>
+          <p class="player__duration__remaining__upper" ng-bind-html="timeRemaining" ng-class="{ '--on': reverseRemaining }"></p>
+          <div class="player__track-info__upper">
+            <p class="player__track-info__title" ng-bind-html="currentTrack.name"></p>
+            <p class="player__track-info__artist" ng-bind-html="currentTrack.artist_string"></p>
+          </div>
+        </div>
       </div>
+
+      <button class="player__controls__next" ng-click="nextTrack()"><span class="vh">Next</button>
     </div>
-
-    <button class="player__next" ng-click="nextTrack()"><span class="vh">Next</button>
-
   </section>
 
   <section class="content  --center  master-playlist" ng-controller="MasterPlaylist" ng-class="{ '--full-width': fullWidth }">
 
     <div class="master-playlist__current-track" ng-show="currentTrack" ng-class="{ '--active': playing }">
-      <img ng-src="{{currentTrack.thumbnail}}" border="0" />
+      <div class="master-playlist__current-track__image">
+        <img class="master-playlist__current-track__image__outer" ng-src="{{currentTrack.thumbnail}}" border="0" />
+        <img class="master-playlist__current-track__image__inner" ng-src="{{currentTrack.thumbnail}}" border="0" />
+      </div>
       <div class="master-playlist__current-track__content">
         <strong ng-bind-html="currentTrack.name"></strong>
         <p ng-bind-html="currentTrack.artist_string"></p>

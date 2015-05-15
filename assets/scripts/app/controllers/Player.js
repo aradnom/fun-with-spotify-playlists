@@ -8,9 +8,9 @@ App.controller( 'Player', [ '$scope', '$rootScope', '$element', 'spotifyHelper',
   /////////////////////////////////////////////////////////////////////////////
 
   // Assume we're not playing to start and that a track isn't loaded
-  var currentTrack  = null;
-  var progressTimer = null;
-  $scope.playing    = false;
+  var progressTimer   = null;
+  $scope.currentTrack = null;
+  $scope.playing      = false;
 
   /////////////////////////////////////////////////////////////////////////////
   // Events ///////////////////////////////////////////////////////////////////
@@ -29,8 +29,8 @@ App.controller( 'Player', [ '$scope', '$rootScope', '$element', 'spotifyHelper',
     if ( $scope.playing ) {
       stopPlayback();
     } else {
-      if ( currentTrack ) {
-        playTrack( currentTrack );
+      if ( $scope.currentTrack ) {
+        playTrack( $scope.currentTrack );
       }
     }
   };
@@ -68,6 +68,7 @@ App.controller( 'Player', [ '$scope', '$rootScope', '$element', 'spotifyHelper',
    * @param  {Object} track Track object from Spotify API
    */
   function playTrack ( track ) {
+    console.log( track );
     spotifyHelper.play( track.uri )
       .then( function ( response ) {
         if ( response.playing ) {
@@ -75,7 +76,7 @@ App.controller( 'Player', [ '$scope', '$rootScope', '$element', 'spotifyHelper',
           setPlayerStatusPlaying( track, response );
 
           // Update the current track
-          currentTrack = track;
+          $scope.currentTrack = track;
         } else {
           // Deal with player errors
           // If API returns a specific error (4303), track is unplayable

@@ -1,56 +1,113 @@
 .player
-  width: 30rem
+  width: 40rem
   position: fixed
   top: 0.5rem
   left: 50%
-  margin-left: -15rem
-  text-align: center
+  margin-left: -20rem
   opacity: 0.5
   transition: 0.2s
   z-index: 25
+  text-align: center
 
   &.\--playing
     opacity: 1
 
     button
-      width: 3rem
-      height: 3rem
+      height: 5rem
 
-  > *
+  &__controls
+    @extend %clearfix
     display: inline-block
-    vertical-align: top
 
-  button
-    border: none
-    background: #333
-    color: #888
-    width: 2rem
-    height: 2rem
-    font-size: 1rem
-    cursor: pointer
-    transition: 0.2s ease-out
+    > *
+      float: left
+      vertical-align: top
+      margin: 0 0.1rem
 
-    &:hover
-      background: #444
+    button
+      border: none
+      width: 2rem
+      height: 2rem
+      font-size: 1.5rem
+      cursor: pointer
+      transition: 0.2s ease-out
 
-  &__prev
-    +icon-before($previous)
+      &:hover
+        background: #555
 
-  &__next
-    +icon-before($next)
+    &__prev, &__next
+      background: none
+      color: #888
 
-  &__play-pause
-    +icon-before($play)
+    &__prev
+      +icon-before($previous)
 
-    &.\--stop
-      +icon-before($stop)
+    &__next
+      +icon-before($next)
+
+    &__play-pause
+      +icon-before($play)
+      background: #333
+      position: relative
+      overflow: hidden
+      color: #888
+
+      .\--playing &
+        width: 5rem
+        color: black
+
+        &:before
+          position: relative
+          z-index: 20
+          opacity: 0.6
+          transition: 0.2s
+
+        &:hover
+          &:before
+            opacity: 1
+
+      &.\--stop
+        +icon-before($stop)
+
+    &__image
+      position: absolute
+      width: 100%
+      height: 100%
+      top: 0
+      left: 0
+      transition: 0.2s
+      opacity: 0
+
+      .\--playing &
+        opacity: 1
+
+      &__inner, &__outer
+        position: absolute
+        top: 0
+        left: 0
+
+      &__inner
+        width: 80%
+        height: 80%
+        left: 10%
+        top: 10%
+
+      &__outer
+        max-width: none
+        width: 110%
+        height: 110%
+        left: -5%
+        top: -5%
+        filter: blur(5px)
 
   &__duration
     &__current, &__remaining
       &__lower, &__upper
         position: absolute
-        top: 0.1rem
-        font-size: 0.9rem
+        bottom: 0rem
+        font-size: 0.8rem
+        transition: 0.2s opacity
+        opacity: 0
 
       &__lower
         color: #999
@@ -61,35 +118,42 @@
 
     &__current
       &__lower, &__upper
-        left: 0.6rem
+        left: 0.5rem
 
     &__remaining
       &__lower, &__upper
-        right: 0.6rem
-        transition: 0.3s ease-out
-
-      &__lower
-        opacity: 1
-
-        &.\--off
-          opacity: 0
-
-      &__upper
-        opacity: 0
-
-        &.\--on
-          opacity: 1
+        right: 0.5rem
 
   &__progress
     width: 0
     height: 2rem
     transition: 0.3s ease-out
     position: relative
+    margin: 0
+
+    &:hover
+      .player__duration
+        &__current
+          &__lower, &__upper
+            opacity: 1
+
+        &__remaining
+          &__lower
+            opacity: 1
+
+            &.\--off
+              opacity: 0
+
+          &__upper
+            opacity: 0
+
+            &.\--on
+              opacity: 1
 
     .player.\--playing &
-      width: 66%
-      background: #333
-      height: 3rem
+      width: 25rem
+      background: #444
+      height: 5rem
       margin: 0 0.25rem
 
     &__inner
@@ -102,3 +166,27 @@
       transition-timing-function: linear
       z-index: 10
       overflow: hidden
+
+  &__track-info
+    transition: 0.2s opacity
+
+    &__title
+      font-size: 1.5rem
+      text-transform: uppercase
+      font-weight: 700
+      white-space: nowrap
+
+    &__artist
+      white-space: nowrap
+      text-transform: lowercase
+
+    &__lower, &__upper
+      text-align: left
+      padding-left: 0.8rem
+      opacity: 0
+
+      .\--playing &
+        opacity: 1
+
+    &__upper
+      color: #222

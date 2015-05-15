@@ -1,27 +1,55 @@
 .master-playlist
-  margin-top: 1.8rem
+  margin-top: 4rem
   transition: 0.2s
 
   &.\--full-width
     width: 80%
 
   &__current-track
-    background: #333
+    display: none
+    width: 30rem
     @extend %clearfix
     opacity: 0.5
     transition: 0.2s
+    position: fixed
+    top: 0rem
+    left: 50%
+    margin-left: -15rem
+    z-index: 10
 
     &.\--active
       opacity: 1
 
-      img
+      .master-playlist__current-track__image
         filter: saturate(100%)
 
-    img
-      width: 10rem
+    &__image
+      width: 5rem
+      height: 5rem
       float: left
       filter: saturate(0%)
       transition: 0.2s
+      position: relative
+      overflow: hidden
+
+      &__outer, &__inner
+        position: absolute
+        top: 0
+        left: 0
+
+      &__outer
+        max-width: none
+        width: 110%
+        height: 110%
+        top: -5%
+        left: -5%
+        filter: blur(7px)
+
+      &__inner
+        width: 80%
+        height: 80%
+        top: 10%
+        left: 10%
 
     &__content
       position: relative

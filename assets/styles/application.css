@@ -35,11 +35,11 @@ strong { font-weight: 700; }
 
 h4 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; }
 
-.clearfix:after, .playlist__title:after, .master-playlist__current-track:after { content: ""; display: table; clear: both; }
+.clearfix:after, .playlist__title:after, .player__controls:after, .master-playlist__current-track:after { content: ""; display: table; clear: both; }
 
 .vh { border: 0; clip: rect(0 0 0 0); height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; width: 1px; }
 
-input[type="text"] { font-family: "Jaldi"; border: none; background: #333; color: #888; padding: 0.4rem 0.6rem; font-size: 1rem; transition: 0.2s; }
+input[type="text"] { font-family: "Jaldi"; border: none; background: #333; color: #888; padding: 0.4rem 0.6rem; font-size: 1rem; transition: 0.2s; outline: none; }
 input[type="text"]:focus { background: #444; }
 
 button { outline: none; }
@@ -47,11 +47,11 @@ button { outline: none; }
 .content.\--center { width: 30rem; margin-left: auto; margin-right: auto; }
 .content.\--fixed { left: 50%; margin-left: -15rem; }
 
-.top-bar { position: fixed; top: 0; left: 0; width: 100%; height: 3rem; background: #333; z-index: 10; }
+.top-bar { position: fixed; top: 0; left: 0; width: 100%; height: 3rem; background: #333; z-index: 10; border-bottom: 2px solid #222; }
 
 .player-main { padding-top: 3rem; }
 
-.sidebar { position: fixed; top: 0; left: 0; height: 100%; width: 18rem; background: #333; transition: 0.2s ease-out; padding-top: 4rem; }
+.sidebar { position: fixed; top: 0; left: 0; height: 100%; width: 18rem; background: #333; transition: 0.2s ease-out; padding-top: 3rem; }
 .sidebar.\--closed { left: -18rem; }
 .sidebar.\--right { left: auto; right: 0; }
 .sidebar.\--right.\--closed { right: -18rem; }
@@ -88,10 +88,10 @@ button { outline: none; }
 .search__query:-ms-input-placeholder { color: #666; }
 .search__query::placeholder { color: #666; }
 .search__query:focus { width: 25rem; padding-top: 0.8rem; padding-bottom: 0.8rem; }
-.search__query:focus::-webkit-input-placeholder { color: #222; }
-.search__query:focus::-moz-placeholder { color: #222; }
-.search__query:focus:-ms-input-placeholder { color: #222; }
-.search__query:focus::placeholder { color: #222; }
+.search__query:focus::-webkit-input-placeholder { color: transparent; }
+.search__query:focus::-moz-placeholder { color: transparent; }
+.search__query:focus:-ms-input-placeholder { color: transparent; }
+.search__query:focus::placeholder { color: transparent; }
 .search__close { background: none; border: none; position: absolute; top: 0; right: 0.5rem; font-size: 1rem; transition: 0.3s; color: #888; opacity: 0; }
 .search__close:after { font-family: "icons"; speak: none; font-style: normal; font-weight: normal; font-variant: normal; text-transform: none; line-height: 1; -webkit-font-smoothing: antialiased; content: ""; }
 .\--focus .search__close { top: 1rem; opacity: 1; cursor: pointer; }
@@ -108,39 +108,60 @@ button { outline: none; }
 .search__results__track__menu__add:hover { color: #5FD052; }
 .search__results__content { padding: 1rem 0; }
 
-.player { width: 30rem; position: fixed; top: 0.5rem; left: 50%; margin-left: -15rem; text-align: center; opacity: 0.5; transition: 0.2s; z-index: 25; }
+.player { width: 40rem; position: fixed; top: 0.5rem; left: 50%; margin-left: -20rem; opacity: 0.5; transition: 0.2s; z-index: 25; text-align: center; }
 .player.\--playing { opacity: 1; }
-.player.\--playing button { width: 3rem; height: 3rem; }
-.player > * { display: inline-block; vertical-align: top; }
-.player button { border: none; background: #333; color: #888; width: 2rem; height: 2rem; font-size: 1rem; cursor: pointer; transition: 0.2s ease-out; }
-.player button:hover { background: #444; }
-.player__prev:before { font-family: "icons"; speak: none; font-style: normal; font-weight: normal; font-variant: normal; text-transform: none; line-height: 1; -webkit-font-smoothing: antialiased; content: ""; }
-.player__next:before { font-family: "icons"; speak: none; font-style: normal; font-weight: normal; font-variant: normal; text-transform: none; line-height: 1; -webkit-font-smoothing: antialiased; content: ""; }
-.player__play-pause:before { font-family: "icons"; speak: none; font-style: normal; font-weight: normal; font-variant: normal; text-transform: none; line-height: 1; -webkit-font-smoothing: antialiased; content: ""; }
-.player__play-pause.\--stop:before { font-family: "icons"; speak: none; font-style: normal; font-weight: normal; font-variant: normal; text-transform: none; line-height: 1; -webkit-font-smoothing: antialiased; content: ""; }
-.player__duration__current__lower, .player__duration__current__upper, .player__duration__remaining__lower, .player__duration__remaining__upper { position: absolute; top: 0.1rem; font-size: 0.9rem; }
+.player.\--playing button { height: 5rem; }
+.player__controls { display: inline-block; }
+.player__controls > * { float: left; vertical-align: top; margin: 0 0.1rem; }
+.player__controls button { border: none; width: 2rem; height: 2rem; font-size: 1.5rem; cursor: pointer; transition: 0.2s ease-out; }
+.player__controls button:hover { background: #555; }
+.player__controls__prev, .player__controls__next { background: none; color: #888; }
+.player__controls__prev:before { font-family: "icons"; speak: none; font-style: normal; font-weight: normal; font-variant: normal; text-transform: none; line-height: 1; -webkit-font-smoothing: antialiased; content: ""; }
+.player__controls__next:before { font-family: "icons"; speak: none; font-style: normal; font-weight: normal; font-variant: normal; text-transform: none; line-height: 1; -webkit-font-smoothing: antialiased; content: ""; }
+.player__controls__play-pause { background: #333; position: relative; overflow: hidden; color: #888; }
+.player__controls__play-pause:before { font-family: "icons"; speak: none; font-style: normal; font-weight: normal; font-variant: normal; text-transform: none; line-height: 1; -webkit-font-smoothing: antialiased; content: ""; }
+.\--playing .player__controls__play-pause { width: 5rem; color: black; }
+.\--playing .player__controls__play-pause:before { position: relative; z-index: 20; opacity: 0.6; transition: 0.2s; }
+.\--playing .player__controls__play-pause:hover:before { opacity: 1; }
+.player__controls__play-pause.\--stop:before { font-family: "icons"; speak: none; font-style: normal; font-weight: normal; font-variant: normal; text-transform: none; line-height: 1; -webkit-font-smoothing: antialiased; content: ""; }
+.player__controls__image { position: absolute; width: 100%; height: 100%; top: 0; left: 0; transition: 0.2s; opacity: 0; }
+.\--playing .player__controls__image { opacity: 1; }
+.player__controls__image__inner, .player__controls__image__outer { position: absolute; top: 0; left: 0; }
+.player__controls__image__inner { width: 80%; height: 80%; left: 10%; top: 10%; }
+.player__controls__image__outer { max-width: none; width: 110%; height: 110%; left: -5%; top: -5%; -webkit-filter: blur(5px); filter: blur(5px); }
+.player__duration__current__lower, .player__duration__current__upper, .player__duration__remaining__lower, .player__duration__remaining__upper { position: absolute; bottom: 0rem; font-size: 0.8rem; transition: 0.2s opacity; opacity: 0; }
 .player__duration__current__lower, .player__duration__remaining__lower { color: #999; z-index: 5; }
 .player__duration__current__upper, .player__duration__remaining__upper { color: #444; }
-.player__duration__current__lower, .player__duration__current__upper { left: 0.6rem; }
-.player__duration__remaining__lower, .player__duration__remaining__upper { right: 0.6rem; transition: 0.3s ease-out; }
-.player__duration__remaining__lower { opacity: 1; }
-.player__duration__remaining__lower.\--off { opacity: 0; }
-.player__duration__remaining__upper { opacity: 0; }
-.player__duration__remaining__upper.\--on { opacity: 1; }
-.player__progress { width: 0; height: 2rem; transition: 0.3s ease-out; position: relative; }
-.player.\--playing .player__progress { width: 66%; background: #333; height: 3rem; margin: 0 0.25rem; }
+.player__duration__current__lower, .player__duration__current__upper { left: 0.5rem; }
+.player__duration__remaining__lower, .player__duration__remaining__upper { right: 0.5rem; }
+.player__progress { width: 0; height: 2rem; transition: 0.3s ease-out; position: relative; margin: 0; }
+.player__progress:hover .player__duration__current__lower, .player__progress:hover .player__duration__current__upper { opacity: 1; }
+.player__progress:hover .player__duration__remaining__lower { opacity: 1; }
+.player__progress:hover .player__duration__remaining__lower.\--off { opacity: 0; }
+.player__progress:hover .player__duration__remaining__upper { opacity: 0; }
+.player__progress:hover .player__duration__remaining__upper.\--on { opacity: 1; }
+.player.\--playing .player__progress { width: 25rem; background: #444; height: 5rem; margin: 0 0.25rem; }
 .player__progress__inner { position: absolute; top: 0; left: 0; width: 0; height: 100%; background: #2ebd59; transition-timing-function: linear; z-index: 10; overflow: hidden; }
+.player__track-info { transition: 0.2s opacity; }
+.player__track-info__title { font-size: 1.5rem; text-transform: uppercase; font-weight: 700; white-space: nowrap; }
+.player__track-info__artist { white-space: nowrap; text-transform: lowercase; }
+.player__track-info__lower, .player__track-info__upper { text-align: left; padding-left: 0.8rem; opacity: 0; }
+.\--playing .player__track-info__lower, .\--playing .player__track-info__upper { opacity: 1; }
+.player__track-info__upper { color: #222; }
 
 .dropzone { overflow: hidden; font-size: 1rem; text-transform: uppercase; text-align: center; transition: 0.2s; background-color: rgba(50, 50, 50, 0); color: #222; height: 0; padding-top: 1.2rem; position: relative; top: 2rem; margin-top: 1rem; }
 .dropzone.\--active { background-color: #323232; height: 4rem; top: 0; }
 .dropzone.\--hover { background-color: #3c3c3c; }
 
-.master-playlist { margin-top: 1.8rem; transition: 0.2s; }
+.master-playlist { margin-top: 4rem; transition: 0.2s; }
 .master-playlist.\--full-width { width: 80%; }
-.master-playlist__current-track { background: #333; opacity: 0.5; transition: 0.2s; }
+.master-playlist__current-track { display: none; width: 30rem; opacity: 0.5; transition: 0.2s; position: fixed; top: 0rem; left: 50%; margin-left: -15rem; z-index: 10; }
 .master-playlist__current-track.\--active { opacity: 1; }
-.master-playlist__current-track.\--active img { -webkit-filter: saturate(100%); filter: saturate(100%); }
-.master-playlist__current-track img { width: 10rem; float: left; -webkit-filter: saturate(0%); filter: saturate(0%); transition: 0.2s; }
+.master-playlist__current-track.\--active .master-playlist__current-track__image { -webkit-filter: saturate(100%); filter: saturate(100%); }
+.master-playlist__current-track__image { width: 5rem; height: 5rem; float: left; -webkit-filter: saturate(0%); filter: saturate(0%); transition: 0.2s; position: relative; overflow: hidden; }
+.master-playlist__current-track__image__outer, .master-playlist__current-track__image__inner { position: absolute; top: 0; left: 0; }
+.master-playlist__current-track__image__outer { max-width: none; width: 110%; height: 110%; top: -5%; left: -5%; -webkit-filter: blur(7px); filter: blur(7px); }
+.master-playlist__current-track__image__inner { width: 80%; height: 80%; top: 10%; left: 10%; }
 .master-playlist__current-track__content { position: relative; top: 0.6rem; left: 1rem; font-size: 1.5rem; -webkit-font-smoothing: antialiased; }
 .master-playlist__current-track__content strong { text-transform: uppercase; font-size: 2.2rem; line-height: 2.2rem; display: block; padding-right: 1rem; margin-top: -0.3rem; }
 .master-playlist__tracks { position: relative; z-index: 5; padding: 1rem; transition: 0.2s; }
