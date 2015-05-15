@@ -216,9 +216,7 @@ App.service( 'spotifyApi', [ 'Spotify', 'userConfig', 'localStorageService', '$c
 
 
   // Bucket we'll dump all Service Stuff into
-  var service = {
-    apiReady: false
-  };
+  var service = { apiReady: false };
 
   // Check for new auth cookies
   setAuthCookies();
