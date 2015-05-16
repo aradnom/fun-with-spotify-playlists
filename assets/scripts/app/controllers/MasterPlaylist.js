@@ -189,7 +189,7 @@ App.controller( 'MasterPlaylist', [ '$scope', '$element', '$rootScope', 'localSt
 
   // On the sidebars closing, check if they're both closed, and if so, expand
   // the playlist to full width
-  $scope.$on( 'sidebarToggle', function ( $event, closed, side ) {
+  $rootScope.$watchCollection( 'sidebarStatus', function () {
     var status = $rootScope.sidebarStatus;
 
     $scope.fullWidth = status.left && status.right;
