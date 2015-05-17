@@ -33,7 +33,7 @@ $sidebar-width: 18rem
         color: #666
         transition: 0.2s
 
-        &:hover
+        &:hover, &.\--active
           color: #888
 
     &__pane-mask
@@ -89,3 +89,6 @@ $sidebar-width: 18rem
 
       .sidebar.\--right.\--closed &
         transform: rotateY(180deg)
+
+  &__playlists
+    padding-bottom: 2rem

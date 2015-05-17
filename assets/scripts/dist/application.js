@@ -1411,16 +1411,21 @@ App.controller( 'Player', [ '$scope', '$rootScope', '$element', 'spotifyHelper',
 /**
  * Playlists controller.
  */
-App.controller( 'Playlists', [ '$scope', '$rootScope', '$element', 'spotifyApi', 'resources', 'spotifyConfig', 'dragAndDrop', 'spotifyUtility', function ( $scope, $rootScope, $element, spotifyApi, resources, spotifyConfig, dragAndDrop, spotifyUtility ) {
+App.controller( 'Playlists', [ '$scope', '$rootScope', '$element', 'spotifyApi', 'resources', 'spotifyConfig', 'dragAndDrop', 'spotifyUtility', 'debounce', function ( $scope, $rootScope, $element, spotifyApi, resources, spotifyConfig, dragAndDrop, spotifyUtility, debounce ) {
 
   /////////////////////////////////////////////////////////////////////////////
   // Init /////////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////
 
+  // Search object for containing playlist/track queries
+  $scope.search = {};
 
   // Wait for resources to be loaded before going
   $scope.$on( 'resourcesReady', function () {
-    displayPlaylists( resources.playlists );
+    var displayPlaylists = buildDisplayPlaylists( resources.playlists );
+
+    // Turn the lights on
+    $scope.playlists = displayPlaylists;
   });
 
 
@@ -1434,6 +1439,8 @@ App.controller( 'Playlists', [ '$scope', '$rootScope', '$element', 'spotifyApi',
     var $tracks = $parent.find( '.playlist__tracks' );
 
     if ( playlist.activeTracks ) {
+      playlist.active = false;
+
       $tracks.velocity( 'slideUp', { duration: Math.log( playlist.tracks.length ) * 0.5 * 1000, easing: 'easeOutExpo', complete: function () {
         playlist.activeTracks = null;
 
@@ -1442,7 +1449,7 @@ App.controller( 'Playlists', [ '$scope', '$rootScope', '$element', 'spotifyApi',
     } else if ( playlist.tracks && playlist.tracks.length ) {
       playlist.activeTracks = playlist.tracks;
 
-      $scope.safeApply();
+      playlist.active = true;
 
       var unsubscribe = $scope.$on( 'ngRepeatFinished', function () {
         $tracks.velocity( 'slideDown', { duration: Math.log( playlist.tracks.length ) * 0.5 * 1000, easing: 'easeOutExpo' });
@@ -1468,6 +1475,22 @@ App.controller( 'Playlists', [ '$scope', '$rootScope', '$element', 'spotifyApi',
     $rootScope.$broadcast( 'dragStop', track );
   };
 
+  $scope.searchPlaylists = debounce( function () {
+    var query = $scope.search.playlists.toLowerCase();
+
+    if ( query ) {
+      var filtered = resources.playlists.filter( function ( playlist ) {
+        return playlist.name.toLowerCase().indexOf( query ) > -1 &&
+          playlist.tracks &&
+          playlist.tracks.length;
+      });
+
+      $scope.playlists = buildDisplayPlaylists( filtered );
+    } else {
+      $scope.playlists = buildDisplayPlaylists( resources.playlists );
+    }
+  }, 100 );
+
 
   /////////////////////////////////////////////////////////////////////////////
   // Internal functions ///////////////////////////////////////////////////////
@@ -1475,11 +1498,11 @@ App.controller( 'Playlists', [ '$scope', '$rootScope', '$element', 'spotifyApi',
 
 
   /**
-   * Put together display playlist array
+   * Put together display playlist array.
    *
    * @param  {Array} playlists Array of raw playlist results
    */
-  function displayPlaylists ( playlists ) {
+  function buildDisplayPlaylists ( playlists ) {
     var displayPlaylists = [];
 
     playlists.forEach( function ( playlist ) {
@@ -1491,8 +1514,7 @@ App.controller( 'Playlists', [ '$scope', '$rootScope', '$element', 'spotifyApi',
       });
     });
 
-    // Turn the lights on
-    $scope.playlists = displayPlaylists;
+    return displayPlaylists;
   }
 }]);
 
@@ -1608,6 +1630,8 @@ App.controller( 'Sidebar', [ '$scope', '$rootScope', '$element', '$attrs', funct
     var $container = $element.find( '.sidebar__panes__pane-container' );
 
     $container.css( 'left', '-' + ( index * sidebarWidth ) + 'px' );
+
+    $scope.activePane = index;
   };
 
   /////////////////////////////////////////////////////////////////////////////

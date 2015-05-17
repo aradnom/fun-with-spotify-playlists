@@ -37,6 +37,8 @@ App.controller( 'Sidebar', [ '$scope', '$rootScope', '$element', '$attrs', funct
     var $container = $element.find( '.sidebar__panes__pane-container' );
 
     $container.css( 'left', '-' + ( index * sidebarWidth ) + 'px' );
+
+    $scope.activePane = index;
   };
 
   /////////////////////////////////////////////////////////////////////////////

@@ -1,0 +1,25 @@
+.mini-search
+  width: 100%
+  position: relative
+
+  input
+    width: 100%
+    font-size: 0.8rem
+    border-bottom: 1px solid #444
+
+  &__close
+    background: none
+    border: none
+    position: absolute
+    top: 0
+    right: 0.4rem
+    font-size: 0.8rem
+    +icon-after($close)
+    transition: 0.3s
+    color: #666
+    opacity: 0
+
+    .\--focus &
+      top: 0.4rem
+      opacity: 1
+      cursor: pointer
