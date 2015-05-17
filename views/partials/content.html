@@ -136,6 +136,10 @@
                   <p class="playlist__title__text" ng-bind-html="playlist.name"></p>
                 </div>
                 <div class="playlist__tracks">
+                  <div class="mini-search" ng-show="playlist.active" ng-class="{ '--focus': playlist.searchFocus }">
+                    <input type="text" placeholder="search tracks" ng-model="search.tracks" ng-keyup="searchTracks( playlist )" ng-focus="playlist.searchFocus = true" ng-blur="playlist.searchFocus = false" />
+                    <button class="mini-search__close" ng-click="search.tracks = ''; searchTracks( playlist );"><span class="vh">Clear search</span></button>
+                  </div>
                   <ul>
                     <li class="playlist__tracks__track" ng-repeat="track in playlist.activeTracks" data-drag="true" jqyoui-draggable="{ animate: true, onStart: 'dragStart( track )', onStop: 'dragStop( track )' }" data-jqyoui-options="{ appendTo: 'body', helper: 'clone' }" repeat-done-event>
                       <p ng-bind-html="track.track.playlist_title" ng-dblclick="addToPlaylist( track.track )"></p>

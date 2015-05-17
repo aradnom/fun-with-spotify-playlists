@@ -1507,7 +1507,22 @@ App.controller( 'Playlists', [ '$scope', '$rootScope', '$element', 'spotifyApi',
     } else {
       $scope.playlists = buildDisplayPlaylists( resources.playlists );
     }
-  }, 100 );
+  }, 200 );
+
+  $scope.searchTracks = debounce( function ( playlist ) {
+    var query = $scope.search.tracks.toLowerCase();
+
+    if ( query && playlist ) {
+      var filtered = playlist.tracks.filter( function ( track ) {
+        return track.track.name.toLowerCase().indexOf( query ) > -1 ||
+          track.track.artist_string.toLowerCase().indexOf( query ) > -1;
+      });
+
+      playlist.activeTracks = filtered;
+    } else {
+      playlist.activeTracks = playlist.tracks;
+    }
+  }, 200 );
 
 
   /////////////////////////////////////////////////////////////////////////////
