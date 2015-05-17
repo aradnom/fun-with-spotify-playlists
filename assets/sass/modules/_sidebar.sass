@@ -1,26 +1,57 @@
+$sidebar-width: 18rem
+
 .sidebar
   position: fixed
   top: 0
   left: 0
   height: 100%
-  width: 18rem
+  width: $sidebar-width
   background: #333
   transition: 0.2s ease-out
   padding-top: 3rem
 
   &.\--closed
-    left: -18rem
+    left: -$sidebar-width
 
   &.\--right
     left: auto
     right: 0
 
     &.\--closed
-      right: -18rem
+      right: -$sidebar-width
 
-  &__content
-    overflow-y: auto
-    height: 100%
+  &__panes
+    &__buttons
+      padding: 0 0.2rem
+      background: #222
+      border-bottom: 1px solid #444
+
+      button
+        border: none
+        background: none
+        font-size: 0.8rem
+        color: #666
+        transition: 0.2s
+
+        &:hover
+          color: #888
+
+    &__pane-mask
+      height: 100%
+      overflow: hidden
+
+    &__pane-container
+      height: 100%
+      width: 100rem
+      position: relative
+      left: 0
+      transition: 0.2s ease-out
+
+    &__pane
+      overflow-y: auto
+      height: 100%
+      float: left
+      width: $sidebar-width
 
   &__close
     position: absolute

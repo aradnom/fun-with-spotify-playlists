@@ -116,23 +116,43 @@
       <button class="sidebar__close__trigger" ng-click="toggleSidebars()"><span class="vh">Close sidebar</span></button>
     </div>
 
-    <div class="sidebar__content">
-      <div class="sidebar__playlists" ng-controller="Playlists">
-        <ul>
-          <li class="playlist" ng-repeat="playlist in playlists" ng-class="{ '--disabled': ! playlist.tracks || ! playlist.tracks.length, '--active': playlist.activeTracks }">
-            <div class="playlist__title" ng-click="showPlaylist( $event, playlist )">
-              <img class="playlist__title__image" ng-if="playlist.image" ng-src="{{playlist.image}}" />
-              <p class="playlist__title__text" ng-bind-html="playlist.name"></p>
-            </div>
+    <div class="sidebar__panes__buttons">
+      <button ng-click="showSidebarPane( 0 )">playlists</button>
+      <button ng-click="showSidebarPane( 1 )">library</button>
+    </div>
+
+    <div class="sidebar__panes__pane-mask">
+      <div class="sidebar__panes__pane-container">
+        <div class="sidebar__panes__pane">
+          <div class="sidebar__playlists" ng-controller="Playlists">
+            <ul>
+              <li class="playlist" ng-repeat="playlist in playlists" ng-class="{ '--disabled': ! playlist.tracks || ! playlist.tracks.length, '--active': playlist.activeTracks }">
+                <div class="playlist__title" ng-click="showPlaylist( $event, playlist )">
+                  <img class="playlist__title__image" ng-if="playlist.image" ng-src="{{playlist.image}}" />
+                  <p class="playlist__title__text" ng-bind-html="playlist.name"></p>
+                </div>
+                <div class="playlist__tracks">
+                  <ul>
+                    <li class="playlist__tracks__track" ng-repeat="track in playlist.activeTracks" data-drag="true" jqyoui-draggable="{ animate: true, onStart: 'dragStart( track )', onStop: 'dragStop( track )' }" data-jqyoui-options="{ appendTo: 'body', helper: 'clone' }" repeat-done-event>
+                      <p ng-bind-html="track.track.playlist_title" ng-dblclick="addToPlaylist( track.track )"></p>
+                    </li>
+                  </ul>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="sidebar__panes__pane">
+          <div class="playlist  --library  --active" ng-controller="Library">
             <div class="playlist__tracks">
               <ul>
-                <li class="playlist__tracks__track" ng-repeat="track in playlist.activeTracks" data-drag="true" jqyoui-draggable="{ animate: true, onStart: 'dragStart( track )', onStop: 'dragStop( track )' }" data-jqyoui-options="{ appendTo: 'body', helper: 'clone' }" repeat-done-event>
+                <li class="playlist__tracks__track" ng-repeat="track in library" data-drag="true" jqyoui-draggable="{ animate: true, onStart: 'dragStart( track )', onStop: 'dragStop( track )' }" data-jqyoui-options="{ appendTo: 'body', helper: 'clone' }" repeat-done-event>
                   <p ng-bind-html="track.track.playlist_title" ng-dblclick="addToPlaylist( track.track )"></p>
                 </li>
               </ul>
             </div>
-          </li>
-        </ul>
+          </div>
+        </div>
       </div>
     </div>
 

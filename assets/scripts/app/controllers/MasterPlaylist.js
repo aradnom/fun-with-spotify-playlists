@@ -123,7 +123,12 @@ App.controller( 'MasterPlaylist', [ '$scope', '$element', '$rootScope', 'localSt
 
   // On track ended event, attempt to play the next track
   $scope.$on( 'trackEnded', function () {
-    playNextTrack();
+    var playing = playNextTrack();
+
+    if ( ! playing ) {
+      // If there is no next track, tell the player to stop
+      $rootScope.$broadcast( 'stopPlayback' );
+    }
   });
 
   // On play track event, display track as the current track
@@ -232,6 +237,8 @@ App.controller( 'MasterPlaylist', [ '$scope', '$element', '$rootScope', 'localSt
 
   /**
    * Attempt to play the next track in the master playlist.
+   *
+   * @return {Boolean} Returns true/false on play success/fail
    */
   function playNextTrack () {
     // Cut tracks down to the playable set just in case
@@ -244,12 +251,19 @@ App.controller( 'MasterPlaylist', [ '$scope', '$element', '$rootScope', 'localSt
 
       if ( trackIndex > -1 && playable[ trackIndex + 1 ] ) {
         $rootScope.$broadcast( 'playTrack', playable[ trackIndex + 1 ] );
+
+        return true;
       }
     }
+
+    // Apparently there was nothing to play
+    return false;
   }
 
   /**
    * Attempt to play the previous track in the master playlist.
+   *
+   * @return {Boolean} Returns true/false on play success/fail
    */
   function playPreviousTrack () {
     // Cut tracks down to the playable set just in case
@@ -262,7 +276,12 @@ App.controller( 'MasterPlaylist', [ '$scope', '$element', '$rootScope', 'localSt
 
       if ( trackIndex > -1 && playable[ trackIndex - 1 ] ) {
         $rootScope.$broadcast( 'playTrack', playable[ trackIndex - 1 ] );
+
+        return true;
       }
     }
+
+    // Apparently there was nothing to play
+    return false;
   }
 }]);

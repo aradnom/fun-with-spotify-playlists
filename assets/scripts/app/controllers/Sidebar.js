@@ -2,6 +2,9 @@
  * Sidebar controller.
  */
 App.controller( 'Sidebar', [ '$scope', '$rootScope', '$element', '$attrs', function ( $scope, $rootScope, $element, $attrs ) {
+  // Get the width of the first sidebar pane for switching panes
+  var sidebarWidth = $element.find( '.sidebar__panes__pane' ).first().width();
+
   // Keep track of the sidebar status in the root scope
   if ( typeof( $rootScope.sidebarStatus ) === 'undefined' ) {
     $rootScope.sidebarStatus = {};
@@ -28,6 +31,12 @@ App.controller( 'Sidebar', [ '$scope', '$rootScope', '$element', '$attrs', funct
 
     // Tell everyone the sidebar was toggled
     $rootScope.$broadcast( 'sidebarToggle' );
+  };
+
+  $scope.showSidebarPane = function ( index ) {
+    var $container = $element.find( '.sidebar__panes__pane-container' );
+
+    $container.css( 'left', '-' + ( index * sidebarWidth ) + 'px' );
   };
 
   /////////////////////////////////////////////////////////////////////////////

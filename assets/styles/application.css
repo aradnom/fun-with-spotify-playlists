@@ -42,7 +42,7 @@ h4 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; }
 input[type="text"] { font-family: "Jaldi"; border: none; background: #333; color: #888; padding: 0.4rem 0.6rem; font-size: 1rem; transition: 0.2s; outline: none; }
 input[type="text"]:focus { background: #444; }
 
-button { outline: none; }
+button { outline: none; cursor: pointer; font-family: "Jaldi"; }
 
 .content.\--center { width: 30rem; margin-left: auto; margin-right: auto; }
 .content.\--fixed { left: 50%; margin-left: -15rem; }
@@ -55,7 +55,12 @@ button { outline: none; }
 .sidebar.\--closed { left: -18rem; }
 .sidebar.\--right { left: auto; right: 0; }
 .sidebar.\--right.\--closed { right: -18rem; }
-.sidebar__content { overflow-y: auto; height: 100%; }
+.sidebar__panes__buttons { padding: 0 0.2rem; background: #222; border-bottom: 1px solid #444; }
+.sidebar__panes__buttons button { border: none; background: none; font-size: 0.8rem; color: #666; transition: 0.2s; }
+.sidebar__panes__buttons button:hover { color: #888; }
+.sidebar__panes__pane-mask { height: 100%; overflow: hidden; }
+.sidebar__panes__pane-container { height: 100%; width: 100rem; position: relative; left: 0; transition: 0.2s ease-out; }
+.sidebar__panes__pane { overflow-y: auto; height: 100%; float: left; width: 18rem; }
 .sidebar__close { position: absolute; top: 4rem; right: -3rem; width: 3rem; height: 100%; }
 .sidebar.\--right .sidebar__close { right: auto; left: -3rem; }
 .sidebar__close:hover .sidebar__close__trigger, .sidebar:hover .sidebar__close .sidebar__close__trigger { opacity: 1; cursor: pointer; }
@@ -145,7 +150,7 @@ button { outline: none; }
 .player__progress:hover .player__duration__remaining__upper { opacity: 0; }
 .player__progress:hover .player__duration__remaining__upper.\--on { opacity: 1; }
 .player.\--playing .player__progress { width: 70%; background: rgba(68, 68, 68, 0.9); height: 5rem; margin: 0 0.25rem; }
-.player__progress__inner { position: absolute; top: 0; left: 0; width: 0; height: 100%; background: #2ebd59; transition-timing-function: linear; z-index: 10; overflow: hidden; }
+.player__progress__inner { position: absolute; top: 0; left: 0; width: 0; height: 100%; background: #2ebd59; z-index: 10; overflow: hidden; }
 .player__track-info { transition: 0.2s opacity; }
 .player__track-info__title { font-size: 1.5rem; text-transform: uppercase; font-weight: 700; white-space: nowrap; }
 .player__track-info__artist { white-space: nowrap; text-transform: lowercase; line-height: 1rem; }
@@ -177,7 +182,7 @@ button { outline: none; }
 .master-playlist__tracks__track.ui-draggable-dragging { transition: none; display: block; width: auto; padding: 0; }
 .master-playlist__tracks__track.ui-draggable-dragging .master-playlist__tracks__track__name { width: auto; }
 .master-playlist__tracks__track.ui-draggable-dragging .master-playlist__tracks__track__artist { display: none; }
-.master-playlist__tracks__track.\--active { font-size: 1.2rem; padding: 0.2rem 1rem; width: 110%; left: -5%; background: rgba(255, 255, 255, 0.05); margin: 1rem 0; }
+.master-playlist__tracks__track.\--active { font-size: 1.2rem; padding: 0.2rem 1rem; left: -5%; background: rgba(255, 255, 255, 0.05); margin: 1rem 0; }
 .master-playlist__tracks__track.\--active strong { font-size: 1.4rem; }
 .master-playlist__tracks__track.\--disabled { opacity: 0.5; cursor: default; }
 .master-playlist__tracks__track:after { content: ""; background: #444; width: 0; height: 1px; position: absolute; left: 0; bottom: 0; transition: 0.6s ease-out; }

@@ -21,9 +21,14 @@ App.controller( 'Player', [ '$scope', '$rootScope', '$element', 'spotifyHelper',
     playTrack( track );
   });
 
+  // On request, stop playback
+  $rootScope.$on( 'stopPlayback', function ( $event, track ) {
+    stopPlayback();
+  });
+
   // On the sidebars closing, move player a bit to take advantage of the extra
   // space
-  $scope.$on( 'sidebarToggle', function ( $event, closed, side ) {
+  $rootScope.$watchCollection( 'sidebarStatus', function () {
     var status = $rootScope.sidebarStatus;
 
     $scope.fullWidth = status.left && status.right;
@@ -137,18 +142,8 @@ App.controller( 'Player', [ '$scope', '$rootScope', '$element', 'spotifyHelper',
     $scope.currentTime   = null;
     $scope.timeRemaining = null;
 
-    // Reset styles - with regular jQuery because we actually need this to go
-    // through right-the-hell-now, not when-digest-gets-around-to-it.
-    $progress.css({
-      'transition-duration': '0',
-      '-moz-transition-duration': '0',
-      '-webkit-transition-duration': '0',
-      '-o-transition-duration': '0',
-      '-ms-transition-duration': '0'
-    });
-
-    // This will kill a CSS transition mid-progress
-    $progress.width( 0 ).hide().show( 0 );
+    // Reset progress width
+    $progress.width( 0 );
 
     // As well as progress counter
     if ( progressTimer ) {
@@ -167,28 +162,13 @@ App.controller( 'Player', [ '$scope', '$rootScope', '$element', 'spotifyHelper',
    * @param {Object} track Spotify Track object
    */
   function startPlayerProgress ( track ) {
-    var $container = $element.find( '.player__progress' );
     var $progress  = $element.find( '.player__progress__inner' );
 
     // Clear progress before doing anything else
     clearProgress();
 
-    // Set progress styles
-    var duration = Math.round( track.duration_ms / 1000 );
-
-    // Set progress styles
-    $progress.css({
-      'transition-duration': duration.toString() + 's',
-      '-moz-transition-duration': duration.toString() + 's',
-      '-webkit-transition-duration': duration.toString() + 's',
-      '-o-transition-duration': duration.toString() + 's',
-      '-ms-transition-duration': duration.toString() + 's'
-    });
-
-    // And set width
-    $progress.width( '100%' );
-
     // Set up progress counting
+    var duration         = Math.round( track.duration_ms / 1000 );
     var progress         = 0;
     var timeRemaining    = duration;
     $scope.currentTime   = utility.getPlayingTimeString( progress );
@@ -200,25 +180,29 @@ App.controller( 'Player', [ '$scope', '$rootScope', '$element', 'spotifyHelper',
     var end    = moment().add( moment.duration( track.duration_ms ) );
 
     progressTimer = $interval( function () {
-      var now      = moment();
-      var progress = Math.round( ( now - start ) / 1000 );
-      var playing  = now.isBefore( end );
+      var now                = moment();
+      var progress           = ( now - start ) / 1000;
+      var progressRounded    = Math.round( progress );
+      var progressPercentage = progress / duration;
+      var playing            = now.isBefore( end );
 
       if ( playing ) {
-        $scope.currentTime = utility.getPlayingTimeString( progress );
-        $scope.timeRemaining = '-' + utility.getPlayingTimeString( duration - progress );
+        // Set progress width
+        $progress.width( ( progressPercentage * 100 ) + '%' );
+
+        // And update playing numbers
+        $scope.currentTime = utility.getPlayingTimeString( progressRounded );
+        $scope.timeRemaining = '-' + utility.getPlayingTimeString( duration - progressRounded );
 
         // If we're a bit into playback, reverse display of Remaining timers
-        if ( ( progress / duration ) > 0.3 ) {
+        if ( progressPercentage > 0.3 ) {
           $scope.reverseRemaining = true;
         }
       } else {
-        // We've hit the end of the track
+        // We've hit the end of the track so let the playlist know that
         $rootScope.$broadcast( 'trackEnded' );
-
-        stopPlayback();
       }
-    }, 1000 );
+    }, 250 );
   }
 
   /**

@@ -823,6 +823,45 @@ App.controller( 'Dropzone', [ '$scope', '$element', function ( $scope, $element 
 }]);
 
 /**
+ * Library controller.
+ */
+App.controller( 'Library', [ '$scope', '$rootScope', '$element', 'spotifyApi', 'resources', 'spotifyConfig', 'dragAndDrop', 'spotifyUtility', function ( $scope, $rootScope, $element, spotifyApi, resources, spotifyConfig, dragAndDrop, spotifyUtility ) {
+
+  /////////////////////////////////////////////////////////////////////////////
+  // Init /////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////
+
+
+  // Wait for resources to be loaded before going
+  $scope.$on( 'resourcesReady', function () {
+    $scope.library = resources.library;
+  });
+
+
+  /////////////////////////////////////////////////////////////////////////////
+  // Scope functions //////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////
+
+
+  $scope.addToPlaylist = function ( track ) {
+    $rootScope.$broadcast( 'addToMasterPlaylist', spotifyUtility.formatTrack( track ) );
+  };
+
+  $scope.dragStart = function ( $event, ui, track ) {
+    $rootScope.$broadcast( 'dragStart', track );
+
+    // Update the track currently dragging in the drag and drop service so
+    // other controllers can see it
+    dragAndDrop.currentTrack = track.track;
+  };
+
+  $scope.dragStop = function ( $event, ui, track ) {
+    $rootScope.$broadcast( 'dragStop', track );
+  };
+
+}]);
+
+/**
  * Body-level controller for anything site-wide.
  */
 App.controller( 'Main', [ '$scope', '$element', 'spotifyHelper', '$timeout', 'Spotify', function ( $scope, $element, spotifyHelper, $timeout, Spotify ) {
@@ -991,7 +1030,12 @@ App.controller( 'MasterPlaylist', [ '$scope', '$element', '$rootScope', 'localSt
 
   // On track ended event, attempt to play the next track
   $scope.$on( 'trackEnded', function () {
-    playNextTrack();
+    var playing = playNextTrack();
+
+    if ( ! playing ) {
+      // If there is no next track, tell the player to stop
+      $rootScope.$broadcast( 'stopPlayback' );
+    }
   });
 
   // On play track event, display track as the current track
@@ -1100,6 +1144,8 @@ App.controller( 'MasterPlaylist', [ '$scope', '$element', '$rootScope', 'localSt
 
   /**
    * Attempt to play the next track in the master playlist.
+   *
+   * @return {Boolean} Returns true/false on play success/fail
    */
   function playNextTrack () {
     // Cut tracks down to the playable set just in case
@@ -1112,12 +1158,19 @@ App.controller( 'MasterPlaylist', [ '$scope', '$element', '$rootScope', 'localSt
 
       if ( trackIndex > -1 && playable[ trackIndex + 1 ] ) {
         $rootScope.$broadcast( 'playTrack', playable[ trackIndex + 1 ] );
+
+        return true;
       }
     }
+
+    // Apparently there was nothing to play
+    return false;
   }
 
   /**
    * Attempt to play the previous track in the master playlist.
+   *
+   * @return {Boolean} Returns true/false on play success/fail
    */
   function playPreviousTrack () {
     // Cut tracks down to the playable set just in case
@@ -1130,8 +1183,13 @@ App.controller( 'MasterPlaylist', [ '$scope', '$element', '$rootScope', 'localSt
 
       if ( trackIndex > -1 && playable[ trackIndex - 1 ] ) {
         $rootScope.$broadcast( 'playTrack', playable[ trackIndex - 1 ] );
+
+        return true;
       }
     }
+
+    // Apparently there was nothing to play
+    return false;
   }
 }]);
 
@@ -1158,9 +1216,14 @@ App.controller( 'Player', [ '$scope', '$rootScope', '$element', 'spotifyHelper',
     playTrack( track );
   });
 
+  // On request, stop playback
+  $rootScope.$on( 'stopPlayback', function ( $event, track ) {
+    stopPlayback();
+  });
+
   // On the sidebars closing, move player a bit to take advantage of the extra
   // space
-  $scope.$on( 'sidebarToggle', function ( $event, closed, side ) {
+  $rootScope.$watchCollection( 'sidebarStatus', function () {
     var status = $rootScope.sidebarStatus;
 
     $scope.fullWidth = status.left && status.right;
@@ -1274,18 +1337,8 @@ App.controller( 'Player', [ '$scope', '$rootScope', '$element', 'spotifyHelper',
     $scope.currentTime   = null;
     $scope.timeRemaining = null;
 
-    // Reset styles - with regular jQuery because we actually need this to go
-    // through right-the-hell-now, not when-digest-gets-around-to-it.
-    $progress.css({
-      'transition-duration': '0',
-      '-moz-transition-duration': '0',
-      '-webkit-transition-duration': '0',
-      '-o-transition-duration': '0',
-      '-ms-transition-duration': '0'
-    });
-
-    // This will kill a CSS transition mid-progress
-    $progress.width( 0 ).hide().show( 0 );
+    // Reset progress width
+    $progress.width( 0 );
 
     // As well as progress counter
     if ( progressTimer ) {
@@ -1304,28 +1357,13 @@ App.controller( 'Player', [ '$scope', '$rootScope', '$element', 'spotifyHelper',
    * @param {Object} track Spotify Track object
    */
   function startPlayerProgress ( track ) {
-    var $container = $element.find( '.player__progress' );
     var $progress  = $element.find( '.player__progress__inner' );
 
     // Clear progress before doing anything else
     clearProgress();
 
-    // Set progress styles
-    var duration = Math.round( track.duration_ms / 1000 );
-
-    // Set progress styles
-    $progress.css({
-      'transition-duration': duration.toString() + 's',
-      '-moz-transition-duration': duration.toString() + 's',
-      '-webkit-transition-duration': duration.toString() + 's',
-      '-o-transition-duration': duration.toString() + 's',
-      '-ms-transition-duration': duration.toString() + 's'
-    });
-
-    // And set width
-    $progress.width( '100%' );
-
     // Set up progress counting
+    var duration         = Math.round( track.duration_ms / 1000 );
     var progress         = 0;
     var timeRemaining    = duration;
     $scope.currentTime   = utility.getPlayingTimeString( progress );
@@ -1337,25 +1375,29 @@ App.controller( 'Player', [ '$scope', '$rootScope', '$element', 'spotifyHelper',
     var end    = moment().add( moment.duration( track.duration_ms ) );
 
     progressTimer = $interval( function () {
-      var now      = moment();
-      var progress = Math.round( ( now - start ) / 1000 );
-      var playing  = now.isBefore( end );
+      var now                = moment();
+      var progress           = ( now - start ) / 1000;
+      var progressRounded    = Math.round( progress );
+      var progressPercentage = progress / duration;
+      var playing            = now.isBefore( end );
 
       if ( playing ) {
-        $scope.currentTime = utility.getPlayingTimeString( progress );
-        $scope.timeRemaining = '-' + utility.getPlayingTimeString( duration - progress );
+        // Set progress width
+        $progress.width( ( progressPercentage * 100 ) + '%' );
+
+        // And update playing numbers
+        $scope.currentTime = utility.getPlayingTimeString( progressRounded );
+        $scope.timeRemaining = '-' + utility.getPlayingTimeString( duration - progressRounded );
 
         // If we're a bit into playback, reverse display of Remaining timers
-        if ( ( progress / duration ) > 0.3 ) {
+        if ( progressPercentage > 0.3 ) {
           $scope.reverseRemaining = true;
         }
       } else {
-        // We've hit the end of the track
+        // We've hit the end of the track so let the playlist know that
         $rootScope.$broadcast( 'trackEnded' );
-
-        stopPlayback();
       }
-    }, 1000 );
+    }, 250 );
   }
 
   /**
@@ -1531,6 +1573,9 @@ App.controller( 'Search', [ '$scope', '$rootScope', '$element', 'spotifyApi', 'd
  * Sidebar controller.
  */
 App.controller( 'Sidebar', [ '$scope', '$rootScope', '$element', '$attrs', function ( $scope, $rootScope, $element, $attrs ) {
+  // Get the width of the first sidebar pane for switching panes
+  var sidebarWidth = $element.find( '.sidebar__panes__pane' ).first().width();
+
   // Keep track of the sidebar status in the root scope
   if ( typeof( $rootScope.sidebarStatus ) === 'undefined' ) {
     $rootScope.sidebarStatus = {};
@@ -1557,6 +1602,12 @@ App.controller( 'Sidebar', [ '$scope', '$rootScope', '$element', '$attrs', funct
 
     // Tell everyone the sidebar was toggled
     $rootScope.$broadcast( 'sidebarToggle' );
+  };
+
+  $scope.showSidebarPane = function ( index ) {
+    var $container = $element.find( '.sidebar__panes__pane-container' );
+
+    $container.css( 'left', '-' + ( index * sidebarWidth ) + 'px' );
   };
 
   /////////////////////////////////////////////////////////////////////////////
