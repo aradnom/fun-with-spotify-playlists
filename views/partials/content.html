@@ -176,8 +176,28 @@
       <button class="sidebar__close__trigger" ng-click="toggleSidebars()"><span class="vh">Close sidebar</span></button>
     </div>
 
-    <div class="sidebar__content">
-      <p>Some'n sure gonna happen in here eventually.</p>
+    <div class="sidebar__panes__buttons">
+      <button ng-click="showSidebarPane( 0 )" ng-class="{ '--active': activePane === 0 || ! activePane }">actions</button>
+      <button ng-click="showSidebarPane( 1 )" ng-class="{ '--active': activePane === 1 }">modifiers</button>
+      <button ng-click="showSidebarPane( 2 )" ng-class="{ '--active': activePane === 2 }">playlists</button>
+      <button ng-click="showSidebarPane( 3 )" ng-class="{ '--active': activePane === 3 }">tracks</button>
+    </div>
+
+    <div class="sidebar__panes__pane-mask">
+      <div class="sidebar__panes__pane-container">
+        <div class="sidebar__panes__pane">
+          Actions
+        </div>
+        <div class="sidebar__panes__pane">
+          Modifiers
+        </div>
+        <div class="sidebar__panes__pane">
+          Playlists
+        </div>
+        <div class="sidebar__panes__pane">
+          Tracks
+        </div>
+      </div>
     </div>
 
   </aside>

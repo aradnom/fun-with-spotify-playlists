@@ -124,6 +124,7 @@ button { outline: none; cursor: pointer; font-family: "Jaldi"; }
 .\--playing .player__controls { width: 100%; }
 .player__controls > * { float: left; vertical-align: top; margin: 0 0.1rem; }
 .player__controls button { border: none; width: 2rem; height: 2rem; font-size: 1.5rem; cursor: pointer; transition: 0.2s ease-out; position: relative; z-index: 10; }
+.player__controls button:before { position: relative; top: -0.2rem; }
 .player__controls button:hover { background: rgba(255, 255, 255, 0.1); }
 .player__controls__prev, .player__controls__next { background: none; color: #888; }
 .player__controls__prev:before { font-family: "icons"; speak: none; font-style: normal; font-weight: normal; font-variant: normal; text-transform: none; line-height: 1; -webkit-font-smoothing: antialiased; content: ""; }
