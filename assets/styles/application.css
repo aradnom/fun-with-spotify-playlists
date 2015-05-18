@@ -46,7 +46,13 @@ input[type="text"]::-moz-placeholder { color: #666; }
 input[type="text"]:-ms-input-placeholder { color: #666; }
 input[type="text"]::placeholder { color: #666; }
 
-button { outline: none; cursor: pointer; font-family: "Jaldi"; }
+button { outline: none; cursor: pointer; font-family: "Jaldi"; position: relative; }
+button.\--action { background: #444; border: none; color: #999; font-size: 0.9rem; width: 100%; display: block; margin: 0 auto; margin-bottom: 0.5rem; transition: 0.2s ease-out; }
+button.\--action:hover { background: #555; }
+
+.button__highlight { display: block; position: absolute; left: 0.5rem; top: 0.5rem; width: 0.75rem; height: 0.75rem; background: #333; border-radius: 5rem; }
+button.\--active .button__highlight:before { background: #2ebd59; }
+.button__highlight:before { content: ""; position: absolute; top: 0.125rem; left: 0.125rem; width: 0.5rem; height: 0.5rem; border-radius: 5rem; background: none; transition: 0.2s; }
 
 .content.\--center { width: 30rem; margin-left: auto; margin-right: auto; }
 .content.\--fixed { left: 50%; margin-left: -15rem; }
@@ -203,5 +209,7 @@ button { outline: none; cursor: pointer; font-family: "Jaldi"; }
 .mini-search__close { background: none; border: none; position: absolute; top: 0; right: 0.4rem; font-size: 0.8rem; transition: 0.3s; color: #666; opacity: 0; }
 .mini-search__close:after { font-family: "icons"; speak: none; font-style: normal; font-weight: normal; font-variant: normal; text-transform: none; line-height: 1; -webkit-font-smoothing: antialiased; content: ""; }
 .\--focus .mini-search__close { top: 0.4rem; opacity: 1; cursor: pointer; }
+
+.player-actions { padding: 1rem; }
 
 /*# sourceMappingURL=application.css.map */

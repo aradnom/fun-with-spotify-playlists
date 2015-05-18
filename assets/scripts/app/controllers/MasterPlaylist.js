@@ -179,8 +179,10 @@ App.controller( 'MasterPlaylist', [ '$scope', '$element', '$rootScope', 'localSt
       });
   });
 
-  $scope.$on( 'addToMasterPlaylist', function ( $event, track ) {
-    addToPlaylist( track, 0 );
+  $scope.$on( 'addToMasterPlaylist', function ( $event, track, index ) {
+    index = index || 0;
+
+    addToPlaylist( track, index );
   });
 
   // Deal with unplayable tracks.  These are discovered at play time (there's

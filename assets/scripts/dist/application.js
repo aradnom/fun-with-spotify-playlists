@@ -4,6 +4,28 @@
 var App = angular.module('App', [ 'ngSanitize', 'ngResource', 'spotify', 'LocalStorageModule', 'ngCookies', 'debounce', 'angular-cache', 'ngDragDrop' ]);
 
 /**
+ * Service for handling simple button-related tasks that are used in multiple
+ * controllers/directives.
+ */
+App.service( 'buttons', [ '$http', '$q', '$timeout', function ( $http, $q, $timeout ) {
+  return {
+    /**
+     * 'Flash' a button - display the button's highlight state for a period
+     * before fading back to the default state.
+     *
+     * @param  {Object} $button Button selector to be flashed
+     */
+    flash: function ( $button ) {
+      $button.addClass( '--active' );
+
+      $timeout( function () {
+        $button.removeClass( '--active' );
+      }, 250 );
+    }
+  };
+}]);
+
+/**
  * App-wide config(s).
  */
 
@@ -1104,8 +1126,10 @@ App.controller( 'MasterPlaylist', [ '$scope', '$element', '$rootScope', 'localSt
       });
   });
 
-  $scope.$on( 'addToMasterPlaylist', function ( $event, track ) {
-    addToPlaylist( track, 0 );
+  $scope.$on( 'addToMasterPlaylist', function ( $event, track, index ) {
+    index = index || 0;
+
+    addToPlaylist( track, index );
   });
 
   // Deal with unplayable tracks.  These are discovered at play time (there's
@@ -1424,6 +1448,48 @@ App.controller( 'Player', [ '$scope', '$rootScope', '$element', 'spotifyHelper',
   function stopPlayerProgress () {
     clearProgress();
   }
+}]);
+
+/**
+ * Player actions.
+ */
+App.controller( 'PlayerActions', [ '$scope', '$element', 'buttons', 'resources', '$rootScope', function ( $scope, $element, buttons, resources, $rootScope ) {
+  $scope.injectFromPlaylist = function ( $event ) {
+    if ( resources.playlists && resources.playlists.length ) {
+      // Find playlists with tracks
+      var playlists = resources.playlists.filter( function ( playlist ) {
+        return playlist.tracks && playlist.tracks.length;
+      });
+
+      if ( playlists.length ) {
+        // Pick a random playlist
+        var playlistIndex = Math.round( Math.random() * ( playlists.length - 1 ) );
+        var playlist      = playlists[ playlistIndex ];
+
+        // Then pick a random track from the playlist
+        var trackIndex    = Math.round( Math.random() * ( playlist.tracks.length - 1 ) );
+        var track         = playlist.tracks[ trackIndex ];
+
+        // Add the track to the playlist
+        $rootScope.$broadcast( 'addToMasterPlaylist', track.track );
+
+        buttons.flash( $( $event.currentTarget ) );
+      }
+    }
+  };
+
+  $scope.injectFromLibrary = function ( $event ) {
+    if ( resources.library && resources.library.length ) {
+      // Pick a random track from the library
+      var trackIndex = Math.round( Math.random() * ( resources.library.length - 1 ) );
+      var track      = resources.library[ trackIndex ];
+
+      // Add the track to the playlist
+      $rootScope.$broadcast( 'addToMasterPlaylist', track.track );
+
+      buttons.flash( $( $event.currentTarget ) );
+    }
+  };
 }]);
 
 /**

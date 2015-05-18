@@ -178,7 +178,7 @@
 
     <div class="sidebar__panes__buttons">
       <button ng-click="showSidebarPane( 0 )" ng-class="{ '--active': activePane === 0 || ! activePane }">actions</button>
-      <button ng-click="showSidebarPane( 1 )" ng-class="{ '--active': activePane === 1 }">modifiers</button>
+      <button ng-click="showSidebarPane( 1 )" ng-class="{ '--active': activePane === 1 }">behaviors</button>
       <button ng-click="showSidebarPane( 2 )" ng-class="{ '--active': activePane === 2 }">playlists</button>
       <button ng-click="showSidebarPane( 3 )" ng-class="{ '--active': activePane === 3 }">tracks</button>
     </div>
@@ -186,16 +186,31 @@
     <div class="sidebar__panes__pane-mask">
       <div class="sidebar__panes__pane-container">
         <div class="sidebar__panes__pane">
-          Actions
+          <div class="player-actions" ng-controller="PlayerActions">
+            <button class="--action" ng-click="injectFromPlaylist( $event )">
+              <span class="button__highlight"></span>
+              inject track from playlist
+            </button>
+            <button class="--action" ng-click="injectFromLibrary( $event )">
+              <span class="button__highlight"></span>
+              inject track from library
+            </button>
+          </div>
         </div>
         <div class="sidebar__panes__pane">
-          Modifiers
+          <div class="player-actions">
+            Behaviors
+          </div>
         </div>
         <div class="sidebar__panes__pane">
-          Playlists
+          <div class="player-actions">
+            Playlists
+          </div>
         </div>
         <div class="sidebar__panes__pane">
-          Tracks
+          <div class="player-actions">
+            Tracks
+          </div>
         </div>
       </div>
     </div>
